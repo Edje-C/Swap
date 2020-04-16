@@ -3,7 +3,7 @@ const router = express.Router();
 const { createCollaboration } = require('../functions/collaborations');
 
 router.post('/', async (req, res) => {
-  let {playlistId, userId} = req.body;
+  const {playlistId, userId} = req.body;
 
   if(!(playlistId && userId)) {
     return res.status(422).json(`Error: Request missing data`)

@@ -38,24 +38,24 @@ router.get(
     const user = req.session.passport.user;
     res.cookie('accessToken', user.accessToken, { expires: new Date(Date.now() + (user.expiresIn * 1000)) });
     res.cookie('refreshToken', user.refreshToken);
-    res.redirect('/spotify/me');
+    res.redirect('/spotify/songs');
   }
 );
 
 router.get(
   '/songs',
    async (req, res) => {
+    const { songCount } = req.query;
+
+    if(!songCount) {
+      res.status(422).json(`Error: Request missing data.`);
+    }
+
     try{
       const accessToken = await refreshAccessToken(req, res);
-      try {
-        const longTermTracks = await getTopTracks('long_term', req.cookies.accessToken || accessToken);
-        const shortTermTracks = await getTopTracks('short_term', req.cookies.accessToken || accessToken);
+      const tracks = await getPlaylistTracks(songCount, req.cookies.accessToken || accessToken);
 
-        res.json({long: longTermTracks.data, short: shortTermTracks.data})
-      }
-      catch(err) {
-        res.status(500).json(`Error: ${err && err.response && err.response.data}`)
-      }
+      res.json(tracks)
     }
     catch(err) {
       res.status(500).json(`Error: ${err}`)

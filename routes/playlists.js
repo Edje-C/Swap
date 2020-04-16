@@ -33,7 +33,7 @@ router.get('/:id', async (req, res) => {
 });
 
 router.post('/', async (req, res) => {
-  let {creatorId, title, songCount, link, spotifyId, password} = req.body;
+  const {creatorId, title, songCount, link, spotifyId, password} = req.body;
 
   if(!(creatorId && title && songCount && link && spotifyId && password)) {
     res.status(422).json(`Error: Request missing data.`);
