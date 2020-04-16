@@ -1,0 +1,28 @@
+{
+  "name": "swap",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "cd client && npm run build && cd .. && nodemon ./bin/www"
+  },
+  "dependencies": {
+    "axios": "^0.19.2",
+    "bcryptjs": "^2.4.3",
+    "cookie-parser": "~1.4.4",
+    "cors": "^2.8.5",
+    "debug": "~2.6.9",
+    "dotenv": "^8.2.0",
+    "express": "~4.16.1",
+    "http-errors": "~1.6.3",
+    "mongoose": "^5.9.9",
+    "morgan": "~1.9.1",
+    "nodemon": "^2.0.3",
+    "passport": "^0.4.1",
+    "passport-spotify": "^1.1.0",
+    "uuid": "^7.0.3"
+  },
+  "main": "app.js",
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}
