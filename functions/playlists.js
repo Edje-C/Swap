@@ -6,34 +6,43 @@ const getPlaylistByUserId = async (userId) => {
 };
 
 const getPlaylistByPlaylistId = async (id) => {
-  return await Playlist.aggregate([
-    {
-      $lookup: {
-        from: 'collaborations',
-        localField: '_id',
-        foreignField: 'playlistId',
-        as: 'collaborations'
-      }
-    },
-    {
-      $match: {
-        '_id': id
-      }  
-    },
-  ])
+  try{
+    return await Playlist.aggregate([
+      {
+        $lookup: {
+          from: 'collaborations',
+          localField: '_id',
+          foreignField: 'playlistId',
+          as: 'collaborations'
+        }
+      },
+      {
+        $match: {
+          '_id': id
+        }  
+      },
+    ])
+  }
+  catch(err) {
+    throw err
+  }
 };
 
-const createPlaylist = async (creatorId, title, songCount, link, spotifyId, password) => {
+const createPlaylist = async (creatorId, title, songCount, spotifyPlaylistId, link, password) => {
   const newPassword = createHash(password);
-
-  return await Playlist.create({
-    creatorId,
-    title,
-    songCount,
-    link,
-    spotifyId,
-    password: newPassword
-  })
+  try {
+    return await Playlist.create({
+      creatorId,
+      title,
+      songCount,
+      link,
+      spotifyPlaylistId,
+      password: newPassword
+    })
+  }
+  catch(err) {
+    throw err
+  }
 };
 
 module.exports = {

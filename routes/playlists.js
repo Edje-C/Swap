@@ -5,6 +5,12 @@ const {
   getPlaylistByPlaylistId,
   createPlaylist
 } = require('../functions/playlists');
+const {
+  getAccessToken,
+  createPlaylistForUser, 
+  addSongsToPlaylist,
+  getPlaylistTracks
+} = require('../lib/spotify');
 
 router.get('/', async (req, res) => {
   const { userId } = req.query;
@@ -33,15 +39,38 @@ router.get('/:id', async (req, res) => {
 });
 
 router.post('/', async (req, res) => {
-  const {creatorId, title, songCount, link, spotifyId, password} = req.body;
+  const {creatorId, spotifyUserId, title, songCount, password} = req.body;
 
-  if(!(creatorId && title && songCount && link && spotifyId && password)) {
-    res.status(422).json(`Error: Request missing data.`);
+  if(!(creatorId && spotifyUserId && title && songCount && password)) {
+    return res.status(422).json(`Error: Request missing data.`);
   }
 
   try {
-    const playlist = await createPlaylist(creatorId, title, songCount, link, spotifyId, password);
-    res.json(playlist);
+    const accessToken = await getAccessToken(req, res);
+    const tracks = await getPlaylistTracks(songCount, req.cookies.accessToken || accessToken);
+
+    if(tracks && tracks.length) {
+      const spotifyPlaylist = await createPlaylistForUser(spotifyUserId, title, accessToken);
+      const { id, external_urls } = spotifyPlaylist.data;
+
+      if(id && external_urls) {
+        addSongsToPlaylist(id, tracks, accessToken);
+  
+        const playlistResponse = await createPlaylist(creatorId, title, songCount, id, external_urls.spotify, password);
+        const playlist = playlistResponse.data;
+
+        res.json({
+          title: playlist.title,
+          link: playlist.link
+        });
+      }
+      else {
+        throw 'Error: Couldn\'t create playlist.'
+      }
+    }
+    else {
+      throw 'Error: No tracks'
+    }
   }
   catch(err) {
     res.status(500).json(`Error: ${err}`)

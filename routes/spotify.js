@@ -2,11 +2,6 @@ const express = require('express');
 const passport = require('../lib/passport');
 
 const router = express.Router();
-const {
-  refreshAccessToken,
-  getPlaylistTracks
-} = require('../lib/spotify');
-const SPOTIFY_API = 'https://api.spotify.com/v1';
 
 router.get('/', (req, res) => {
   res.send('nice')
@@ -15,6 +10,7 @@ router.get('/', (req, res) => {
 router.get(
   '/auth',
   passport.authenticate('spotify', {
+    failureRedirect: '/',
     scope: [
       'user-read-private', 
       'user-read-email', 
@@ -38,26 +34,5 @@ router.get(
     res.redirect('/spotify/songs?songCount=10');
   }
 );
-
-router.get(
-  '/songs',
-   async (req, res) => {
-    const { songCount } = req.query;
-
-    if(!songCount) {
-      res.status(422).json(`Error: Request missing data.`);
-    }
-
-    try{
-      const accessToken = await refreshAccessToken(req, res);
-      const tracks = await getPlaylistTracks(songCount, req.cookies.accessToken || accessToken);
-
-      res.json(tracks)
-    }
-    catch(err) {
-      res.status(500).json(`Error: ${err}`)
-    }
-  }
-)
 
 module.exports = router;

@@ -1,7 +1,12 @@
 const User = require('../models/user.model');
 
 const getUserById = async (spotifyId) => {
-  return await User.findOne({spotifyId});
+  try {
+    return await User.findOne({spotifyId});
+  }
+  catch(err) {
+    return err
+  }
 };
 
 

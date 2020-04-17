@@ -9,26 +9,26 @@ const playlistSchema = new Schema(
       type: String,
       default: uuid.v4
     },
+    creatorId: {
+      type: String,
+      required: true,
+      ref: 'User'
+    },
     title: {
       type: String,
       required: true,
       trim: true,
       minlength: 3
     },
-    creatorId: {
-      type: String,
-      required: true,
-      ref: 'User'
-    },
     songCount: {
       type: Number,
       required: true
     },
-    link: {
+    spotifyPlaylistId: {
       type: String,
       required: true
     },
-    spotifyId: {
+    link: {
       type: String,
       required: true
     },
