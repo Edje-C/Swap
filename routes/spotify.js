@@ -4,9 +4,6 @@ const passport = require('../lib/passport');
 const router = express.Router();
 const {
   refreshAccessToken,
-  getTopTracks,
-  getSavedTracks,
-  getRecommendedTracks,
   getPlaylistTracks
 } = require('../lib/spotify');
 const SPOTIFY_API = 'https://api.spotify.com/v1';
