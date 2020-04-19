@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "cd client && npm run build && cd .. && nodemon ./bin/www"
+    "start:dev": "cd client && npm run build && cd .. && nodemon ./bin/www"
   },
   "dependencies": {
     "axios": "^0.19.2",
@@ -13,14 +13,19 @@
     "debug": "~2.6.9",
     "dotenv": "^8.2.0",
     "express": "~4.16.1",
+    "express-session": "^1.17.1",
     "http-errors": "~1.6.3",
     "lodash": "^4.17.15",
     "mongoose": "^5.9.9",
     "morgan": "~1.9.1",
-    "nodemon": "^2.0.3",
     "passport": "^0.4.1",
     "passport-spotify": "^1.1.0",
+    "react-router-dom": "^5.1.2",
+    "styled-components": "^5.1.0",
     "uuid": "^7.0.3"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.3"
   },
   "main": "app.js",
   "author": "",

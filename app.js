@@ -3,6 +3,7 @@ const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
+const session = require('express-session');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const passport = require('passport');
@@ -22,15 +23,32 @@ app.use(express.json());
 app.use(cors());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-
+app.use(session({
+  secret: "\x02\xf3\xf7r\t\x9f\xee\xbbu\xb1\xe1\x90\xfe'\xab\xa6L6\xdd\x8d[\xccO\xfe",
+  resave: false,
+  saveUninitialized: true
+}));
 app.use(passport.initialize());
 app.use(passport.session());
 
+
+app.use('/api/spotify', spotifyRouter);
+app.use('/api/users', userRouter);
+app.use('/api/playlists', playlistRouter);
+app.use('/api/collaborations', collaborationRouter);
+
+app.post('/api', (req, res) => {
+  const { apiToken } = req.body;
+
+  res.cookie('apiToken', apiToken);
+
+  res.status(200).json('success');
+})
+
 app.use('/', express.static(path.join(__dirname, 'client/build')));
-app.use('/users', userRouter);
-app.use('/playlists', playlistRouter);
-app.use('/collaborations', collaborationRouter);
-app.use('/spotify', spotifyRouter);
+app.get('*', (req, res) => {
+  res.sendFile(__dirname + '/client/build/index.html');
+});
 
 mongoose.connect(uri, {useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true});
 connection.on('error', console.error.bind(console, 'connection error:'));
@@ -46,8 +64,7 @@ app.use((err, req, res, next) => {
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
   res.status(err.status || 500);
-  res.send('err');
-  console.log('err', err)
+  res.send(err);
 });
 
 module.exports = app;

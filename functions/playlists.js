@@ -1,5 +1,5 @@
 const Playlist = require('../models/playlist.model');
-const { createHash } = require('../lib/helpers');
+const { createHash, comparePass } = require('../lib/helpers');
 
 const getPlaylistByUserId = async (userId) => {
   return await Playlist.find({userId: userId});
@@ -45,8 +45,25 @@ const createPlaylist = async (creatorId, title, songCount, spotifyPlaylistId, li
   }
 };
 
+const verifyPlaylistPassword = async(playlistId, password) => {
+  try {
+    const playlist = await Playlist.findById(playlistId);
+
+    if(new Date() <= new Date(playlist.passwordExpiration)) {
+      return comparePass(password, playlist.password);
+    }
+    else {
+      throw 'Error: Password has expired'
+    }
+  }
+  catch(err) {
+    throw err
+  }
+}
+
 module.exports = {
   getPlaylistByUserId,
   getPlaylistByPlaylistId,
-  createPlaylist
+  createPlaylist,
+  verifyPlaylistPassword
 }

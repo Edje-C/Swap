@@ -5,7 +5,7 @@ const getUserById = async (spotifyId) => {
     return await User.findOne({spotifyId});
   }
   catch(err) {
-    return err
+    throw err
   }
 };
 

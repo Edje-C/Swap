@@ -1,8 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const { createCollaboration } = require('../functions/collaborations');
+const { tokenRequired, loginRequired } = require('../lib/helpers');
 
-router.post('/', async (req, res) => {
+router.post('/', tokenRequired, loginRequired, async (req, res) => {
   const {playlistId, userId} = req.body;
 
   if(!(playlistId && userId)) {
@@ -15,7 +16,7 @@ router.post('/', async (req, res) => {
 
   }
   catch(err) {
-    res.status(500).json(`Error: ${err}`)
+    res.status(500).json(err)
   }
 });
 

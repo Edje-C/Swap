@@ -3,10 +3,6 @@ const passport = require('../lib/passport');
 
 const router = express.Router();
 
-router.get('/', (req, res) => {
-  res.send('nice')
-});
-
 router.get(
   '/auth',
   passport.authenticate('spotify', {
@@ -31,7 +27,7 @@ router.get(
     const user = req.session.passport.user;
     res.cookie('accessToken', user.accessToken, { expires: new Date(Date.now() + (user.expiresIn * 1000)) });
     res.cookie('refreshToken', user.refreshToken);
-    res.redirect('/spotify/songs?songCount=10');
+    res.redirect('/');
   }
 );
 

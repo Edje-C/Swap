@@ -1,9 +1,11 @@
 const express = require('express');
 const router = express.Router();
+const { tokenRequired, loginRequired } = require('../lib/helpers');
 const {
   getPlaylistByUserId,
   getPlaylistByPlaylistId,
-  createPlaylist
+  createPlaylist,
+  verifyPlaylistPassword
 } = require('../functions/playlists');
 const {
   getAccessToken,
@@ -12,7 +14,7 @@ const {
   getPlaylistTracks
 } = require('../lib/spotify');
 
-router.get('/', async (req, res) => {
+router.get('/', tokenRequired, loginRequired, async (req, res) => {
   const { userId } = req.query;
 
   if(!userId) {
@@ -24,21 +26,39 @@ router.get('/', async (req, res) => {
     res.json(playlists);
   }
   catch(err) {
-    res.status(500).json(`Error: ${err}`)
+    res.status(500).json(err)
   }
 });
 
-router.get('/:id', async (req, res) => {
+router.get('/:id', tokenRequired, loginRequired, async (req, res) => {
   try {
     const playlist = await getPlaylistByPlaylistId(req.params.id);
     res.json(playlist);
   }
   catch(err) {
-    res.status(500).json(`Error: ${err}`)
+    res.status(500).json(err)
   }
 });
 
-router.post('/', async (req, res) => {
+
+router.post('/join', tokenRequired, loginRequired, async (req, res) => {
+  const {playlistId, password} = req.body;
+
+  if(!(playlistId && password)) {
+    return res.status(422).json(`Error: Request missing data.`);
+  }
+
+  try {
+    const passwordMatches = await verifyPlaylistPassword(playlistId, password);
+
+    res.json(passwordMatches)
+  }
+  catch(err) {
+    res.status(500).json(err)
+  }
+})
+
+router.post('/', tokenRequired, loginRequired, async (req, res) => {
   const {creatorId, spotifyUserId, title, songCount, password} = req.body;
 
   if(!(creatorId && spotifyUserId && title && songCount && password)) {
@@ -73,7 +93,7 @@ router.post('/', async (req, res) => {
     }
   }
   catch(err) {
-    res.status(500).json(`Error: ${err}`)
+    res.status(500).json(err)
   }
 });
 
