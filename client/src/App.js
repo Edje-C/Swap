@@ -37,6 +37,7 @@ class App extends Component {
 
     try {
       const user = await getUser();
+
       user &&
         this.setState({
           userId: user._id,
@@ -48,17 +49,24 @@ class App extends Component {
     }
   }
 
+  renderHomePage = () => {
+    return (
+      this.state.userId && 
+        this.state.userSpotifyId ?
+          <Playlist /> :
+          <Landing />
+      )
+  }
+
   render() {
     return (
       <Container>
         <Header/>
         <Switch>
           <Route exact path="/">
-            {this.state.userId && this.state.spotifyId ?
-              <Playlist /> :
-              <Landing />}
+            {this.renderHomePage()}
           </Route>
-          <Route path="/playlists">
+          <Route path="/swaps">
             <Join />
           </Route>
           <Route path="/*">

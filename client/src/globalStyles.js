@@ -35,6 +35,11 @@ export const colors = {
   spotifyGreen: '#20D760'
 }
 
+export const boxShadows = {
+  blue1: '0 10px 40px -10px rgba(46, 46, 70, .3)',
+  blue2: '0 10px 40px -10px rgba(46, 46, 70, .6)'
+}
+
 export const images = {
   logo: require('./assets/logo.png'),
   spotifyIconWhite: require('./assets/spotify-icon-white.png'),

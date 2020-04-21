@@ -16,6 +16,15 @@ export const saveApiToken = async (apiToken) => {
   })
 }
 
+export const saveToClipboard = (text) => {
+  var dummy = document.createElement("textarea");
+    document.body.appendChild(dummy);
+    dummy.value = text;
+    dummy.select();
+    document.execCommand("copy");
+    document.body.removeChild(dummy);
+}
+
 export const parseCookies = () => {
   const cookies = {};
   const cookieStrings =  document.cookie && document.cookie.split(';');
