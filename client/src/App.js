@@ -3,11 +3,15 @@ import { Route, Switch } from 'react-router-dom'
 import styled from 'styled-components';
 
 import { generateApiToken, saveApiToken, parseCookies, getUser } from './functions';
+import { colors } from './globalStyles';
 
-import Home from './pages/home';
-import Login from './pages/login';
+import Landing from './pages/landing';
 import Playlist from './pages/playlist';
+import Join from './pages/join';
 import Error from './pages/error';
+import Header from './components/header';
+import Footer from './components/footer';
+
 
 class App extends Component {
   constructor(props) {
@@ -47,28 +51,31 @@ class App extends Component {
   render() {
     return (
       <Container>
+        <Header/>
         <Switch>
           <Route exact path="/">
-            <Home />
-          </Route>
-          <Route path="/login">
-            <Login />
+            {this.state.userId && this.state.spotifyId ?
+              <Playlist /> :
+              <Landing />}
           </Route>
           <Route path="/playlists">
-            <Playlist />
+            <Join />
           </Route>
           <Route path="/*">
             <Error />
           </Route>
         </Switch>
+        <Footer/>
       </Container>
     );
   }
 }
 
 const Container = styled.div`
-  background-color: #131420;
-  background: linear-gradient(to bottom, #131420, #1E192A);
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to bottom right, ${colors.blue}, ${colors.cyan});
+  overflow: auto;
 `;
 
 export default App;

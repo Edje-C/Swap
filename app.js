@@ -45,7 +45,7 @@ app.post('/api', (req, res) => {
   res.status(200).json('success');
 })
 
-app.use('/', express.static(path.join(__dirname, 'client/build')));
+app.use('/', express.static(path.join(__dirname, 'client/build'))).use(cors());
 app.get('*', (req, res) => {
   res.sendFile(__dirname + '/client/build/index.html');
 });

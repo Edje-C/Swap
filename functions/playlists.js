@@ -2,11 +2,7 @@ const Playlist = require('../models/playlist.model');
 const { createHash, comparePass } = require('../lib/helpers');
 
 const getPlaylistByUserId = async (userId) => {
-  return await Playlist.find({userId: userId});
-};
-
-const getPlaylistByPlaylistId = async (id) => {
-  try{
+  try {
     return await Playlist.aggregate([
       {
         $lookup: {
@@ -14,14 +10,79 @@ const getPlaylistByPlaylistId = async (id) => {
           localField: '_id',
           foreignField: 'playlistId',
           as: 'collaborations'
+        },
+      },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'creatorId',
+          foreignField: '_id',
+          as: 'creator'
         }
       },
       {
         $match: {
-          '_id': id
-        }  
+          'creatorId': userId
+        }
       },
+      {
+        $unwind: '$creator'
+      },
+      {
+        $addFields: {
+          collaborators: {
+            $size: '$collaborations'
+          }
+        }
+      },
+      {
+        $unset: ['password', 'updatedAt', 'songCount', 'creatorId', 'collaborations']
+      }
     ])
+  }
+  catch(err) {
+    throw err
+  }
+};
+
+const getPlaylistByPlaylistId = async (playlistId) => {
+  try{
+    return await Playlist.aggregate([
+        {
+          $lookup: {
+            from: 'collaborations',
+            localField: '_id',
+            foreignField: 'playlistId',
+            as: 'collaborations'
+          },
+        },
+        {
+          $lookup: {
+            from: 'users',
+            localField: 'creatorId',
+            foreignField: '_id',
+            as: 'creator'
+          }
+        },
+        {
+          $match: {
+            '_id': playlistId
+          }
+        },
+        {
+          $unwind: '$creator'
+        },
+        {
+          $addFields: {
+            collaborators: {
+              $size: '$collaborations'
+            }
+          }
+        },
+        {
+          $unset: ['password', 'updatedAt', 'songCount', 'creatorId', 'collaborations']
+        }
+      ])
   }
   catch(err) {
     throw err
