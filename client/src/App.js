@@ -12,6 +12,7 @@ import Join from './pages/join';
 import Error from './pages/error';
 import Header from './components/header';
 import Footer from './components/footer';
+import How from './pages/how';
 
 
 class App extends Component {
@@ -80,6 +81,9 @@ class App extends Component {
               userSpotifyId={this.state.userSpotifyId}
               displayName={this.state.displayName}
             />
+          </Route>
+          <Route path="/how">
+            <How />
           </Route>
           <Route path="/*">
             <Error />
