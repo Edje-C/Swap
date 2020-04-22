@@ -17,7 +17,7 @@ export const getUser = async () => {
     
     const user =  await axios({
       method: 'get',
-      url: '/api/users/alittleify',
+      url: '/api/users/',
       headers: {
         'Authorization': `Bearer ${apiToken}`
       },
@@ -30,7 +30,7 @@ export const getUser = async () => {
   }
 }
 
-export const getPlaylists = async () => {
+export const getPlaylists = async (userId) => {
   try {
     const {apiToken} = parseCookies();
     
@@ -41,7 +41,7 @@ export const getPlaylists = async () => {
         'Authorization': `Bearer ${apiToken}`
       },
       params: {
-        userId: '61086c4a-ee94-4314-8315-db1e8638d7e7'
+        userId
       }
     })
 
@@ -57,9 +57,9 @@ export const updatePassword = async (playlistId) => {
     const {apiToken} = parseCookies();
     const password = generatePassword();
     
-    const playlists = await axios({
+    await axios({
       method: 'post',
-      url: '/api/playlists/updatePassword',
+      url: '/api/playlists/update-password',
       headers: {
         'Authorization': `Bearer ${apiToken}`
       },
@@ -70,6 +70,53 @@ export const updatePassword = async (playlistId) => {
     })
 
     return password
+  }
+  catch(err) {
+    throw err
+  }
+}
+
+export const verifyPassword = async (playlistId, password) => {
+  try {
+    const {apiToken} = parseCookies();
+    
+    const passwordIsCorrect = await axios({
+      method: 'post',
+      url: '/api/playlists/verify-password',
+      headers: {
+        'Authorization': `Bearer ${apiToken}`
+      },
+      data: {
+        playlistId,
+        password
+      }
+    });
+
+    return passwordIsCorrect
+  }
+  catch(err) {
+    throw err
+  }
+}
+
+export const joinPlaylist = async (playlistId, userId, spotifyUserId) => {
+  try {
+    const {apiToken} = parseCookies();
+    
+    const playlist = await axios({
+      method: 'post',
+      url: '/api/playlists/join',
+      headers: {
+        'Authorization': `Bearer ${apiToken}`
+      },
+      data: {
+        playlistId,
+        userId,
+        spotifyUserId
+      }
+    })
+
+    return playlist.data
   }
   catch(err) {
     throw err

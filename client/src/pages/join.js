@@ -2,24 +2,54 @@ import React, { Component } from 'react';
 import { useParams } from 'react-router-dom'
 import styled from 'styled-components';
 import { fontSizes, fontWeights, colors, boxShadows } from '../globalStyles';
+import { joinPlaylist, verifyPassword } from '../api';
 
 class Join extends Component {
   constructor(props) {
     super(props);
 
-    this.state = {}
+    this.state = {
+      playlistId: '',
+      password: ''
+    }
   }
 
-  renderLogin = () => {
+  componentDidMount = () => {
     const path = window.location.pathname;
     const splitPath = path && path.split('/');
     const playlistId = splitPath && splitPath[2];
+    playlistId &&
+      this.setState({
+        playlistId
+      })
+  }
 
+  joinSwap = async () => {
+    try {
+      const verifyPasswordResponse = await verifyPassword(this.state.playlistId, this.state.password);
+      const passwordIsCorrect = verifyPasswordResponse.data;
+
+      if(passwordIsCorrect) {
+        const playlist = await joinPlaylist(this.state.playlistId, this.props.userId, this.props.userSpotifyId);
+        console.log('playlist', playlist);
+      }
+      else {
+        console.log('Error: Password is incorrect.')
+      }
+    }
+    catch(err) {
+      console.log(err)
+    }
+  }
+
+  renderLogin = () => {
     return (
       <>
         <Heading>Swap id:</Heading>
-        <SwapId>{playlistId}</SwapId>
-        <LoginButton>Login</LoginButton>
+        <SwapId>{this.state.playlistId}</SwapId>
+        <LoginButton>
+          Login
+        </LoginButton>
       </>
     );
   }
@@ -28,8 +58,19 @@ class Join extends Component {
     return (
       <>
         <Heading>Enter Password</Heading>
-        <Input type="password" />
-        <JoinButton>Join</JoinButton>
+        <Input 
+          onChange={(event) => {
+            this.setState({
+              password: event.target.value
+            })
+          }}
+          type="password"
+        />
+        <JoinButton
+          onClick={this.joinSwap}
+        >
+          Join
+        </JoinButton>
       </>
     );
   }
@@ -116,7 +157,7 @@ const SwapId = styled.p`
 
 const LoginButton = styled.button`
   width: 150px;
-  background: ${colors.opaqueBlue};
+  background: ${colors.purple};
   color: ${colors.white};
   font-size: ${fontSizes.regular};
   margin: 50px auto 0px;
@@ -126,7 +167,6 @@ const LoginButton = styled.button`
   transition: all .3s ease;
 
   &:hover {
-    background: ${colors.purple};
     box-shadow: ${boxShadows.blue2};
   }
 `;

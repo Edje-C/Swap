@@ -25,12 +25,10 @@ const playlistSchema = new Schema(
       required: true
     },
     spotifyPlaylistId: {
-      type: String,
-      required: true
+      type: String
     },
     link: {
-      type: String,
-      required: true
+      type: String
     },
     password: {
       type: String,

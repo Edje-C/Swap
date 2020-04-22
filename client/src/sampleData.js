@@ -8,6 +8,7 @@ export const samplePlaylist = {
   createdAt: "2020-04-17T07:24:02.007Z",
   creator: {
     _id: "61086c4a-ee94-4314-8315-db1e8638d7e7",
-    spotifyId: "alittleify"
+    spotifyId: "alittleify",
+    displayName: "alittleify",
   }
 }

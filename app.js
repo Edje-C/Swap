@@ -11,7 +11,7 @@ require('dotenv').config();
 
 const userRouter = require('./routes/users');
 const playlistRouter = require('./routes/playlists');
-const collaborationRouter = require('./routes/collaborations');
+const trackRouter = require('./routes/tracks');
 const spotifyRouter = require('./routes/spotify');
 
 const app = express();
@@ -35,7 +35,7 @@ app.use(passport.session());
 app.use('/api/spotify', spotifyRouter);
 app.use('/api/users', userRouter);
 app.use('/api/playlists', playlistRouter);
-app.use('/api/collaborations', collaborationRouter);
+app.use('/api/tracks', trackRouter);
 
 app.post('/api', (req, res) => {
   const { apiToken } = req.body;

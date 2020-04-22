@@ -2,15 +2,17 @@ const express = require('express');
 const router = express.Router();
 const { tokenRequired, loginRequired } = require('../lib/helpers');
 const {
-  getPlaylistByUserId,
-  getPlaylistByPlaylistId,
+  getFullPlaylistByUserId,
+  getFullPlaylistByPlaylistId,
   createPlaylist,
   verifyPlaylistPassword,
   updatePassword
 } = require('../functions/playlists');
 const {
+  saveTracks
+} = require('../functions/tracks');
+const {
   getAccessToken,
-  createPlaylistForUser, 
   addSongsToPlaylist,
   getPlaylistTracks
 } = require('../lib/spotify');
@@ -23,7 +25,7 @@ router.get('/', tokenRequired, loginRequired, async (req, res) => {
   }
 
   try {
-    const playlists = await getPlaylistByUserId(userId);
+    const playlists = await getFullPlaylistByUserId(userId);
     res.json(playlists);
   }
   catch(err) {
@@ -33,7 +35,7 @@ router.get('/', tokenRequired, loginRequired, async (req, res) => {
 
 router.get('/:id', tokenRequired, loginRequired, async (req, res) => {
   try {
-    const playlist = await getPlaylistByPlaylistId(req.params.id);
+    const playlist = await getFullPlaylistByPlaylistId(req.params.id);
     res.json(playlist);
   }
   catch(err) {
@@ -41,8 +43,7 @@ router.get('/:id', tokenRequired, loginRequired, async (req, res) => {
   }
 });
 
-
-router.post('/join', tokenRequired, loginRequired, async (req, res) => {
+router.post('/update-password', tokenRequired, loginRequired, async (req, res) => {
   const {playlistId, password} = req.body;
 
   if(!(playlistId && password)) {
@@ -50,9 +51,26 @@ router.post('/join', tokenRequired, loginRequired, async (req, res) => {
   }
 
   try {
-    const passwordMatches = await verifyPlaylistPassword(playlistId, password);
+    const updatedPassword = await updatePassword(playlistId, password);
 
-    res.json(passwordMatches)
+    res.json(updatedPassword)
+  }
+  catch(err) {
+    res.status(500).json(err)
+  }
+})
+
+router.post('/verify-password', tokenRequired, loginRequired, async (req, res) => {
+  const {playlistId, password} = req.body;
+
+  if(!(playlistId && password)) {
+    return res.status(422).json(`Error: Request missing data.`);
+  }
+
+  try {
+    const passwordIsCorrect = await verifyPlaylistPassword(playlistId, password);
+
+    res.json(passwordIsCorrect)
   }
   catch(err) {
     res.status(500).json(err)
@@ -60,34 +78,22 @@ router.post('/join', tokenRequired, loginRequired, async (req, res) => {
 })
 
 router.post('/', tokenRequired, loginRequired, async (req, res) => {
-  const {creatorId, spotifyUserId, title, songCount, password} = req.body;
+  const {userId, title, songCount, password} = req.body;
 
-  if(!(creatorId && spotifyUserId && title && songCount && password)) {
+  if(!(userId && title && songCount && password)) {
     return res.status(422).json(`Error: Request missing data.`);
   }
 
   try {
     const accessToken = await getAccessToken(req, res);
-    const tracks = await getPlaylistTracks(songCount, req.cookies.accessToken || accessToken);
 
     if(tracks && tracks.length) {
-      const spotifyPlaylist = await createPlaylistForUser(spotifyUserId, title, accessToken);
-      const { id, external_urls } = spotifyPlaylist.data;
+      const newPlaylistResponse = await createPlaylist(userId, title, songCount, password, accessToken);
+      const newPlaylist = newPlaylistResponse.data;
+      
+      const fullPlaylist = await getFullPlaylistByPlaylistId(newPlaylist._id)
 
-      if(id && external_urls) {
-        addSongsToPlaylist(id, tracks, accessToken);
-  
-        const playlistResponse = await createPlaylist(creatorId, title, songCount, id, external_urls.spotify, password);
-        const playlist = playlistResponse.data;
-
-        res.json({
-          title: playlist.title,
-          link: playlist.link
-        });
-      }
-      else {
-        throw 'Error: Couldn\'t create playlist.'
-      }
+      res.json(fullPlaylist);
     }
     else {
       throw 'Error: No tracks'
@@ -97,22 +103,5 @@ router.post('/', tokenRequired, loginRequired, async (req, res) => {
     res.status(500).json(err)
   }
 });
-
-router.post('/updatePassword', tokenRequired, loginRequired, async (req, res) => {
-  const {playlistId, password} = req.body;
-
-  if(!(playlistId && password)) {
-    return res.status(422).json(`Error: Request missing data.`);
-  }
-
-  try {
-    const passwordMatches = await updatePassword(playlistId, password);
-
-    res.json(passwordMatches)
-  }
-  catch(err) {
-    res.status(500).json(err)
-  }
-})
 
 module.exports = router;

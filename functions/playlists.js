@@ -1,7 +1,8 @@
 const Playlist = require('../models/playlist.model');
+const Tracks = require('../models/tracks.model');
 const { createHash, comparePass } = require('../lib/helpers');
 
-const getPlaylistByUserId = async (userId) => {
+const getFullPlaylistByUserId = async (userId) => {
   try {
     return await Playlist.aggregate([
       {
@@ -45,7 +46,7 @@ const getPlaylistByUserId = async (userId) => {
   }
 };
 
-const getPlaylistByPlaylistId = async (playlistId) => {
+const getFullPlaylistByPlaylistId = async (playlistId) => {
   try{
     return await Playlist.aggregate([
         {
@@ -89,20 +90,59 @@ const getPlaylistByPlaylistId = async (playlistId) => {
   }
 };
 
-const createPlaylist = async (creatorId, title, songCount, spotifyPlaylistId, link, password) => {
-  const newPassword = createHash(password);
+const getPlaylistByPlaylistId = async (playlistId) => {
   try {
-    return await Playlist.create({
-      creatorId,
-      title,
-      songCount,
-      link,
-      spotifyPlaylistId,
-      password: newPassword
-    })
+    return await Playlist.findById(playlistId)
   }
   catch(err) {
     throw err
+  }
+}
+
+const createPlaylist = async (creatorId, title, songCount, password, accessToken) => {
+  const newPassword = createHash(password);
+  let uris;
+
+  try {
+    uris = await getPlaylistTracks(songCount, accessToken);
+  }
+  catch(err) {
+    throw err
+  }
+
+  const session = await User.startSession();
+  session.startTransaction();
+
+  try {
+    const opts = { session };
+    const playlist = await Playlist.create(
+      {
+        creatorId,
+        title,
+        songCount,
+        password: newPassword
+      },
+      opts
+    );
+
+    await Tracks.create(
+      {
+        id: playlist._id,
+        creatorId,
+        uris
+      },
+      opts
+    );
+
+    await session.commitTransaction();
+    session.endSession();
+
+    return playlist;
+  } catch (err) {
+    await session.abortTransaction();
+    session.endSession();
+
+    throw err; 
   }
 };
 
@@ -111,7 +151,9 @@ const verifyPlaylistPassword = async(playlistId, password) => {
     const playlist = await Playlist.findById(playlistId);
 
     if(new Date() <= new Date(playlist.passwordExpiration)) {
-      return comparePass(password, playlist.password);
+      const passwordIsCorrect = comparePass(password, playlist.password);
+
+      return passwordIsCorrect
     }
     else {
       throw 'Error: Password has expired'
@@ -128,7 +170,7 @@ const updatePassword = async (playlistId, password) => {
     const playlist = await Playlist.findById(playlistId);
 
     if(playlist) {
-      const updatedPlaylist = await Playlist.updateOne(
+      await Playlist.updateOne(
         {_id: playlistId},
         {
           $set: {
@@ -150,7 +192,8 @@ const updatePassword = async (playlistId, password) => {
 }
 
 module.exports = {
-  getPlaylistByUserId,
+  getFullPlaylistByUserId,
+  getFullPlaylistByPlaylistId,
   getPlaylistByPlaylistId,
   createPlaylist,
   verifyPlaylistPassword,

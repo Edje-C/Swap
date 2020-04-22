@@ -22,7 +22,8 @@ class Playlist extends Component {
 
   componentDidMount = async () => {
     try {
-      const playlists = await getPlaylists();
+      const playlists = await getPlaylists(this.props.userId);
+
       this.setState({
         playlists
       })
@@ -131,6 +132,7 @@ const Header = styled.div`
   width: 100%;
   display: flex;
   justify-content: space-between;
+  align-items: center;
   margin: 25px 0px 75px;
   padding: 50px 25px;
   border-bottom: 2px solid ${colors.white};
@@ -148,7 +150,7 @@ const NewPlaylistButton = styled.button`
   border: 2px solid ${colors.white};
   color: ${colors.white};
   font-size: ${fontSizes.regular};
-  padding: 10px 0px;
+  padding: 15px 0px;
   border-radius: 50px;
   box-shadow:  ${boxShadows.blue1};
   transition: all .2s ease;

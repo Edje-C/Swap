@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema;
 
-const collaborationSchema = new Schema(
+const tracksSchema = new Schema(
   {
     playlistId: {
       type: String,
@@ -13,6 +13,10 @@ const collaborationSchema = new Schema(
       type: String,
       required: true,
       ref: 'User'
+    },
+    uris: {
+      type: [String],
+      required: true
     }
   },
   {
@@ -20,6 +24,6 @@ const collaborationSchema = new Schema(
   }
 );
 
-const Collaboration = mongoose.model('Collaboration', collaborationSchema);
+const Tracks = mongoose.model('Tracks', tracksSchema);
 
-module.exports = Collaboration;
+module.exports = Tracks;
