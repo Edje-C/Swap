@@ -3,14 +3,18 @@ import styled from 'styled-components';
 import moment from "moment";
 import { colors, fontSizes, fontWeights, boxShadows } from "../globalStyles";
 import { getPlaylists, saveToClipboard } from "../functions";
+import { samplePlaylist } from "../sampleData";
+import NewPlaylist from "../components/newPlaylist";
+import SharePlaylist from "../components/sharePlaylist";
 
 class Playlist extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      renderModal: false,
-      playlists: [],
+      renderPlaylistDetailsModal: false,
+      renderNewPlaylistModal: false,
+      playlists: [samplePlaylist, samplePlaylist, samplePlaylist, samplePlaylist, samplePlaylist],
       selectedPlaylist: -1,
       newPassword: ''
     };
@@ -28,44 +32,38 @@ class Playlist extends Component {
     }
   }
 
-  renderModal = () => {
+  renderNewPlaylistModal = () => {
+    return (
+      <ModalBackground 
+        onClick={(event) => {
+          this.setState({
+            renderNewPlaylistModal: false
+          })
+        }}
+      >
+        <NewPlaylist/>
+      </ModalBackground>
+    )
+  }
+
+  renderPlaylistDetailsModal = () => {
     const playlist = this.state.playlists[this.state.selectedPlaylist];
+    const passwordHasExpired = new Date(playlist.passwordExpiration) <= new Date();
 
     return (
       <ModalBackground 
         onClick={(event) => {
           this.setState({
-            renderModal: false,
+            renderPlaylistDetailsModal: false,
             selectedPlaylist: -1,
             newPassword: ''
           })
         }}
       >
-        <ModalContent
-          onClick={(event)=> 
-            event.stopPropagation()}
-        >
-          <ModalHeader>
-            <ModalTitle>{playlist.title}</ModalTitle>
-            <ModalLink
-              onClick={() => {
-                saveToClipboard(`http://localhost:3000/playlists/${playlist._id}`);
-              }}
-            >
-              {`http://localhost:3000/playlists/${playlist._id}`}
-              <ModalLinkCopy>copy</ModalLinkCopy>
-            </ModalLink>
-          </ModalHeader>
-          <ModalDetails>
-            <ModalDetail>creator: {playlist.creator && playlist.creator.spotifyId || ''}</ModalDetail>
-            <ModalDetail>date: {moment(playlist.createdAt).format('LL')}</ModalDetail>
-            <ModalDetail>collaborators: {playlist.collaborators}</ModalDetail>
-            <ModalDetail>password expiry: {moment(playlist.passwordExpiration).format('LLL')}</ModalDetail>
-            {this.state.newPassword ?
-              <NewPasswordText>value={this.state.newPassword}</NewPasswordText> :
-              <NewPasswordButton>generate new password</NewPasswordButton>}
-          </ModalDetails>
-        </ModalContent>
+        <SharePlaylist
+          playlist={playlist}
+          passwordHasExpired={passwordHasExpired}
+        />
       </ModalBackground>
     )
   }
@@ -76,7 +74,7 @@ class Playlist extends Component {
         <PlaylistCard>
           <PlaylistTitle href={playlist.link}>{playlist.title}</PlaylistTitle>
           <PlaylistDetails>
-            <PlaylistByLine>alittleify</PlaylistByLine>
+            <PlaylistByLine>{playlist.creator.spotifyId}</PlaylistByLine>
             <PlaylistDate>
               {moment(playlist.createdAt).format('LL')}
             </PlaylistDate>
@@ -85,7 +83,7 @@ class Playlist extends Component {
           <ShareButton 
             onClick={() => {
               this.setState({
-                renderModal: true,
+                renderPlaylistDetailsModal: true,
                 selectedPlaylist: index
               })
             }}
@@ -100,8 +98,20 @@ class Playlist extends Component {
   render() {
     return (
       <Container>
-        {this.state.renderModal && this.renderModal()}
-        <NewPlaylistButton><NewPlaylistIcon className="material-icons">add</NewPlaylistIcon></NewPlaylistButton>
+        {this.state.renderPlaylistDetailsModal && this.renderPlaylistDetailsModal()}
+        {this.state.renderNewPlaylistModal && this.renderNewPlaylistModal()}
+        <Header>
+          <Heading>{this.props.userSpotifyId || 'alittleify'}</Heading>
+          <NewPlaylistButton
+            onClick={() => {
+              this.setState({
+                renderNewPlaylistModal: true
+              });
+            }}
+          >
+              New Swap
+          </NewPlaylistButton>
+        </Header>
         <Playlists>
           {this.renderPlaylists()}
         </Playlists>
@@ -114,24 +124,41 @@ const Container = styled.div`
   min-height: calc(100% - 190px);
   display: flex;
   flex-direction: column;
-  margin-top: 115px;
-  padding: 50px 100px;
+  padding: 0px 100px;
+`;
+
+const Header = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  margin: 75px 0px;
+  padding: 50px 25px;
+  border-bottom: 2px solid ${colors.white};
+`;
+
+const Heading = styled.p`
+  color: ${colors.white};
+  font-family: 'Montserrat Alternates', sans-serif;
+  font-size: ${fontSizes.xlarge};
 `;
 
 const NewPlaylistButton = styled.button`
-  width: 75px;
-  height: 75px;
-  background: ${colors.purple};
+  width: 200px;
+  background: none;
+  border: 2px solid ${colors.white};
   color: ${colors.white};
-  border-radius: 100%;
-  position: absolute;
-  bottom: 125px;
-  right: 75px;
-  box-shadow:  ${boxShadows.blue2};
-`;
+  font-size: ${fontSizes.regular};
+  padding: 10px 0px;
+  border-radius: 50px;
+  box-shadow:  ${boxShadows.blue1};
+  transition: all .2s ease;
 
-const NewPlaylistIcon = styled.span`
-  font-size: ${fontSizes.xlarge};
+  &:hover {
+    box-shadow:  ${boxShadows.blue2};
+    background: ${colors.purple};
+    color: ${colors.white};
+    border: 2px solid ${colors.purple};
+  }
 `;
 
 const Playlists = styled.div`
@@ -139,8 +166,7 @@ const Playlists = styled.div`
   max-width: 1000px;
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-between;
-  margin: 0px auto;
+  margin: 0px auto 50px;
 `;
 
 const PlaylistCard = styled.div`
@@ -148,8 +174,7 @@ const PlaylistCard = styled.div`
   background: rgba(255, 255, 255, .2);
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  margin-bottom: 50px;
+  margin: 0px 1.66% 50px;
   padding: 20px;
   border-radius: 10px;
   box-shadow: ${boxShadows.blue1};
@@ -225,12 +250,13 @@ const ShareButton = styled.button`
   padding: 8px 0px;
   border: 2px solid transparent;
   border-radius: 50px;
+  box-shadow: ${boxShadows.blue1};
   transition: all .3s ease;
 
   &:hover {
-    color: ${colors.blue};
+    color: ${colors.purple};
     background: ${colors.white};
-    box-shadow: ${boxShadows.blue1};
+    box-shadow: ${boxShadows.blue2};
   }
 `;
 
@@ -245,96 +271,6 @@ const ModalBackground = styled.div`
   top: 0;
   left: 0;
   z-index: 10;
-`;
-
-const ModalContent = styled.div`
-  width: 500px;
-  height: 500px;
-  background: ${colors.white};
-  color: ${colors.gray};
-  font-size: ${fontSizes.xsmall};
-  padding: 50px;
-  border-radius: 10px;
-  box-shadow: ${boxShadows.blue2};
-
-  animation: .2s ease slidein;
-
-  @keyframes slidein {
-    0% {
-      margin-top: 100px;
-    },
-    100% {
-      margin-top: 0px;
-    }
-`;
-
-const ModalHeader = styled.div`
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 30px;
-  padding-bottom: 20px;
-  border-bottom: 1px solid ${colors.gray};
-`;
-
-const ModalTitle = styled.p`
-  color: ${colors.darkGray};
-  font-size: ${fontSizes.large};
-  font-weight: ${fontWeights.medium};
-  margin-bottom: 10px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-`;
-
-const ModalLink = styled.button`
-  background: ${colors.lightPurple};
-  color: ${colors.gray};
-  font-size: ${fontSizes.xsmall};
-  font-weight: ${fontWeights.semiLight};
-  padding: 5px 68px 5px 8px;
-  border-radius: 3px;
-  position: relative;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-
-  &:hover {
-    color: ${colors.opaqueWhite1};
-  }
-`;
-
-const ModalLinkCopy = styled.p`
-  width: 60px;
-  height: 100%;
-  background: ${colors.opaqueWhite3};
-  padding: 5px 8px;
-  position: absolute;
-  top: 0;
-  right: 0;
-
-  ${ModalLink}:hover & {
-    color: ${colors.gray};
-  }
-`;
-
-const ModalDetails = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
-
-const ModalDetail = styled.p`
-  margin-bottom: 20px;
-`;
-
-const NewPasswordText = styled.p``;
-
-const NewPasswordButton = styled.button`
-  width: 100%;
-  background: none;
-  color: ${colors.opaqueBlue};
-  font-size: ${fontSizes.xsmall};
-  margin-top: 20px;
-  padding: 5px 0px;
 `;
 
 export default Playlist;

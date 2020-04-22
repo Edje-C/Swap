@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Link as ReactLink } from 'react-router-dom'
-import { colors, fontSizes, images } from '../globalStyles';
+import { colors, fontSizes, images, fontWeights } from '../globalStyles';
 
 const Header = () => {
   return (
@@ -17,10 +17,11 @@ const Header = () => {
 const Container = styled.div`
   width: 100%;
   display: flex;
+  background: linear-gradient(to bottom, ${colors.opaqueBlue}, transparent);
   justify-content: space-between;
   align-items: center;
   padding: 20px 40px;
-  position: fixed;
+  position: relative;
   z-index: 5;
 `;
 
@@ -39,6 +40,8 @@ const Links = styled.div`
 
 const Link = styled.p`
   font-size: ${fontSizes.small};
+  font-weight: ${fontWeights.regular};
+  color: ${colors.white};
   cursor: pointer;
 
   &::after {

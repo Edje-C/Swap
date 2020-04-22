@@ -53,8 +53,12 @@ class App extends Component {
     return (
       this.state.userId && 
         this.state.userSpotifyId ?
-          <Playlist /> :
-          <Landing />
+          <Landing /> :
+          <Playlist 
+            userId={this.state.userId}
+            userSpotifyId={this.state.userSpotifyId}
+          />
+          // : <Landing /> 
       )
   }
 

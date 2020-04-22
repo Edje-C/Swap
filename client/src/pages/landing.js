@@ -22,6 +22,7 @@ const Container = styled.div`
   width: 100%;
   height: calc(100% - 75px);
   display: flex;
+  margin-top: -115px;
 
   background: linear-gradient(to bottom left, ${colors.purple}, ${colors.lightPurple});
   

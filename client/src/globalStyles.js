@@ -17,20 +17,22 @@ export const fontWeights = {
 
 export const colors = {
   black: '#000000',
+  lightBlack: ' #505B69',
   white: '#EFFFFF',
+  lightGray: '#E7F3F3',
   gray: '#9494AA',
   darkGray: '#2E2E46',
   opaqueWhite1: 'rgba(239, 255, 255, .8)',
   opaqueWhite2: 'rgba(239, 255, 255, .7)',
   opaqueWhite3: 'rgba(239, 255, 255, .5)',
-  opaqueBlack: 'rgba(19, 20, 32, .5)',
+  opaqueBlack: 'rgba(19, 20, 32, .6)',
   opaqueBlue: 'rgba(43, 50, 178, .6)',
   blueBlack: '#131420',
   darkBlue: '#1B1F3B',
   blue: '#2B32B2',
-  purple: '#5433FF',
   lightBlue: '#20BDFF',
   cyan: '#0FE3FF',
+  purple: '#5433FF',
   lightPurple: '#DDDDEE',
   spotifyGreen: '#20D760'
 }
