@@ -5,7 +5,8 @@ const {
   getPlaylistByUserId,
   getPlaylistByPlaylistId,
   createPlaylist,
-  verifyPlaylistPassword
+  verifyPlaylistPassword,
+  updatePassword
 } = require('../functions/playlists');
 const {
   getAccessToken,
@@ -96,5 +97,22 @@ router.post('/', tokenRequired, loginRequired, async (req, res) => {
     res.status(500).json(err)
   }
 });
+
+router.post('/updatePassword', tokenRequired, loginRequired, async (req, res) => {
+  const {playlistId, password} = req.body;
+
+  if(!(playlistId && password)) {
+    return res.status(422).json(`Error: Request missing data.`);
+  }
+
+  try {
+    const passwordMatches = await updatePassword(playlistId, password);
+
+    res.json(passwordMatches)
+  }
+  catch(err) {
+    res.status(500).json(err)
+  }
+})
 
 module.exports = router;

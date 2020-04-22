@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import styled from 'styled-components';
 import moment from "moment";
 import { colors, fontSizes, fontWeights, boxShadows } from "../globalStyles";
-import { getPlaylists, saveToClipboard } from "../functions";
+import { getPlaylists } from "../api";
 import { samplePlaylist } from "../sampleData";
 import NewPlaylist from "../components/newPlaylist";
 import SharePlaylist from "../components/sharePlaylist";

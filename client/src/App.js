@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import { Route, Switch } from 'react-router-dom'
 import styled from 'styled-components';
 
-import { generateApiToken, saveApiToken, parseCookies, getUser } from './functions';
+import { saveApiToken, getUser } from './api';
+import { generateApiToken, parseCookies } from './functions';
 import { colors } from './globalStyles';
 
 import Landing from './pages/landing';
@@ -53,12 +54,12 @@ class App extends Component {
     return (
       this.state.userId && 
         this.state.userSpotifyId ?
-          <Landing /> :
+          // <Landing /> :
           <Playlist 
             userId={this.state.userId}
             userSpotifyId={this.state.userSpotifyId}
           />
-          // : <Landing /> 
+          : <Landing /> 
       )
   }
 

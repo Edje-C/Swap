@@ -122,9 +122,37 @@ const verifyPlaylistPassword = async(playlistId, password) => {
   }
 }
 
+const updatePassword = async (playlistId, password) => {
+  const newPassword = createHash(password);
+  try {
+    const playlist = await Playlist.findById(playlistId);
+
+    if(playlist) {
+      const updatedPlaylist = await Playlist.updateOne(
+        {_id: playlistId},
+        {
+          $set: {
+            password: newPassword,
+            passwordExpiration: new Date(+new Date() + 24*60*60*1000)
+          }
+        }
+      );
+  
+      return playlist
+    }
+    else {
+      throw 'Error: Playlist not found.'
+    }
+  }
+  catch(err) {
+    throw err
+  }
+}
+
 module.exports = {
   getPlaylistByUserId,
   getPlaylistByPlaylistId,
   createPlaylist,
-  verifyPlaylistPassword
+  verifyPlaylistPassword,
+  updatePassword
 }

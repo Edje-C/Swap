@@ -1,22 +1,20 @@
-import axios from 'axios';
 import uuid from 'uuid';
+import passwordGenerator from 'generate-password';
 
 
 export const generateApiToken = () => {
   return uuid.v4();
 }
 
-export const saveApiToken = async (apiToken) => {
-  await axios({
-    method: 'post',
-    url: '/api',
-    data: {
-      apiToken
-    }
-  })
+export const generatePassword = () => {
+  return passwordGenerator.generate({
+    length: 16,
+    numbers: true,
+    strict: true
+  });
 }
 
-export const saveToClipboard = (text) => {
+export const copyToClipboard = (text) => {
   var dummy = document.createElement("textarea");
     document.body.appendChild(dummy);
     dummy.value = text;
@@ -42,45 +40,4 @@ export const parseCookies = () => {
   });
 
   return cookies
-}
-
-export const getUser = async () => {
-  try {
-    const {apiToken} = parseCookies();
-    
-    const user =  await axios({
-      method: 'get',
-      url: '/api/users/alittleify',
-      headers: {
-        'Authorization': `Bearer ${apiToken}`
-      },
-    })
-
-    return user.data
-  }
-  catch(err) {
-    throw err
-  }
-}
-
-export const getPlaylists = async () => {
-  try {
-    const {apiToken} = parseCookies();
-    
-    const playlists =  await axios({
-      method: 'get',
-      url: '/api/playlists',
-      headers: {
-        'Authorization': `Bearer ${apiToken}`
-      },
-      params: {
-        userId: '61086c4a-ee94-4314-8315-db1e8638d7e7'
-      }
-    })
-
-    return playlists.data
-  }
-  catch(err) {
-    throw err
-  }
 }
