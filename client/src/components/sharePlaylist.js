@@ -32,7 +32,7 @@ class SharePlaylist extends Component {
             this.setState({
               passwordText: password
             })
-          }, 2000);
+          }, 1000);
         }
       );
     }
@@ -45,47 +45,47 @@ class SharePlaylist extends Component {
 
   render() {
     return (
-      <ModalContent
+      <Content
         onClick={(event)=> 
           event.stopPropagation()}
       >
-        <ModalHeader>
-          <ModalTitle>{this.props.playlist.title}</ModalTitle>
-          <ModalLink
+        <Header>
+          <Title>{this.props.playlist.title}</Title>
+          <Link
             onClick={() => {
               copyToClipboard(`http://localhost:3000/playlists/${this.props.playlist._id}`);
             }}
           >
             {`http://localhost:3000/playlists/${this.props.playlist._id}`}
-            <ModalLinkCopy>copy</ModalLinkCopy>
-          </ModalLink>
-        </ModalHeader>
-        <ModalDetails>
-          <ModalDetail>creator: <ModalDetailSpan>{this.props.playlist.creator && this.props.playlist.creator.spotifyId || ''}</ModalDetailSpan></ModalDetail>
-          <ModalDetail>date: <ModalDetailSpan>{moment(this.props.playlist.createdAt).format('LL')}</ModalDetailSpan></ModalDetail>
-          <ModalDetail>collaborators: <ModalDetailSpan>{this.props.playlist.collaborators}</ModalDetailSpan></ModalDetail>
-          <ModalDetail>password expiry: <ModalDetailSpan urgent={this.props.passwordHasExpired}>{moment(this.props.playlist.passwordExpiration).format('LLL')}</ModalDetailSpan></ModalDetail>
+            <LinkCopy>copy</LinkCopy>
+          </Link>
+        </Header>
+        <Details>
+          <Detail>creator: <DetailSpan>{this.props.playlist.creator && this.props.playlist.creator.spotifyId || ''}</DetailSpan></Detail>
+          <Detail>date: <DetailSpan>{moment(this.props.playlist.createdAt).format('LL')}</DetailSpan></Detail>
+          <Detail>collaborators: <DetailSpan>{this.props.playlist.collaborators}</DetailSpan></Detail>
+          <Detail>password expiry: <DetailSpan urgent={this.props.passwordHasExpired}>{moment(this.props.playlist.passwordExpiration).format('LLL')}</DetailSpan></Detail>
           <PasswordButton
             onClick={this.onPasswordButtonClick}
           >
             {this.state.passwordText ? this.state.passwordText : 'generate new password'}
           </PasswordButton>
-        </ModalDetails>
-      </ModalContent>
+        </Details>
+      </Content>
     );
   }
 }
 
 
-const ModalHeader = styled.div`
+const Header = styled.div`
   display: flex;
   flex-direction: column;
   margin-bottom: 30px;
   padding-bottom: 20px;
-  border-bottom: 1px solid ${colors.gray};
+  border-bottom: 1px solid ${colors.opaqueBlue};
 `;
 
-const ModalTitle = styled.p`
+const Title = styled.p`
   color: ${colors.darkGray};
   font-size: ${fontSizes.large};
   font-weight: ${fontWeights.regular};
@@ -95,9 +95,9 @@ const ModalTitle = styled.p`
   white-space: nowrap;
 `;
 
-const ModalLink = styled.button`
-  background: ${colors.lightPurple};
-  color: ${colors.gray};
+const Link = styled.button`
+  background: ${colors.lightGray};
+  color: ${colors.opaqueBlack};
   font-size: ${fontSizes.xsmall};
   font-weight: ${fontWeights.semiLight};
   padding: 5px 68px 5px 8px;
@@ -108,34 +108,36 @@ const ModalLink = styled.button`
   white-space: nowrap;
 
   &:hover {
-    color: ${colors.lightBlack};
+    color: ${colors.gray};
   }
 `;
 
-const ModalLinkCopy = styled.p`
+const LinkCopy = styled.p`
   width: 60px;
   height: 100%;
-  background: ${colors.opaqueWhite3};
+  background: ${colors.lightBlue};
+  color: ${colors.white};
+  font-weight: ${fontWeights.semiLight};
   padding: 5px 8px;
   position: absolute;
   top: 0;
   right: 0;
 
-  ${ModalLink}:hover & {
-    color: ${colors.gray};
+  ${Link}:hover & {
+    color: ${colors.white};
   }
 `;
 
-const ModalDetails = styled.div`
+const Details = styled.div`
   display: flex;
   flex-direction: column;
 `;
 
-const ModalDetail = styled.p`
+const Detail = styled.p`
   margin-bottom: 20px;
 `;
 
-const ModalDetailSpan = styled.span`
+const DetailSpan = styled.span`
   color: ${props => props.urgent ? colors.purple : colors.darkBlue};
 `;
 
@@ -148,8 +150,7 @@ const PasswordButton = styled.button`
   padding: 5px 0px;
 `;
 
-
-const ModalContent = styled.div`
+const Content = styled.div`
   width: 500px;
   height: 500px;
   background: ${colors.white};

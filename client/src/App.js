@@ -20,7 +20,8 @@ class App extends Component {
 
     this.state = {
       userId: '',
-      userSpotifyId: ''
+      userSpotifyId: '',
+      displayName: ''
     };
   }
 
@@ -42,7 +43,8 @@ class App extends Component {
       user &&
         this.setState({
           userId: user._id,
-          userSpotifyId: user.spotifyId
+          userSpotifyId: user.spotifyId,
+          displayName: user.displayName
         })
     }
     catch(err) {
@@ -53,13 +55,14 @@ class App extends Component {
   renderHomePage = () => {
     return (
       this.state.userId && 
-        this.state.userSpotifyId ?
-          // <Landing /> :
-          <Playlist 
-            userId={this.state.userId}
-            userSpotifyId={this.state.userSpotifyId}
-          />
-          : <Landing /> 
+      this.state.userSpotifyId && 
+      this.state.displayName ?
+        <Playlist 
+          userId={this.state.userId}
+          userSpotifyId={this.state.userSpotifyId}
+          displayName={this.state.displayName}
+        /> :
+        <Landing /> 
       )
   }
 
@@ -71,8 +74,12 @@ class App extends Component {
           <Route exact path="/">
             {this.renderHomePage()}
           </Route>
-          <Route path="/swaps">
-            <Join />
+          <Route path="/swaps/:id">
+            <Join
+              userId={this.state.userId}
+              userSpotifyId={this.state.userSpotifyId}
+              displayName={this.state.displayName}
+            />
           </Route>
           <Route path="/*">
             <Error />

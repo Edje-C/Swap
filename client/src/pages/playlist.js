@@ -101,7 +101,7 @@ class Playlist extends Component {
         {this.state.renderPlaylistDetailsModal && this.renderPlaylistDetailsModal()}
         {this.state.renderNewPlaylistModal && this.renderNewPlaylistModal()}
         <Header>
-          <Heading>{this.props.userSpotifyId || 'alittleify'}</Heading>
+          <Heading>{this.props.displayName}</Heading>
           <NewPlaylistButton
             onClick={() => {
               this.setState({
@@ -131,7 +131,7 @@ const Header = styled.div`
   width: 100%;
   display: flex;
   justify-content: space-between;
-  margin: 75px 0px;
+  margin: 25px 0px 75px;
   padding: 50px 25px;
   border-bottom: 2px solid ${colors.white};
 `;
