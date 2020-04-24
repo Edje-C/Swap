@@ -52,6 +52,25 @@ export const getPlaylists = async (userId) => {
   }
 }
 
+export const getPlaylist = async (id) => {
+  try {
+    const {apiToken} = parseCookies();
+    
+    const playlists =  await axios({
+      method: 'get',
+      url: `/api/playlists/${id}`,
+      headers: {
+        'Authorization': `Bearer ${apiToken}`
+      }
+    })
+
+    return playlists.data
+  }
+  catch(err) {
+    throw err
+  }
+}
+
 export const updatePassword = async (playlistId) => {
   try {
     const {apiToken} = parseCookies();
@@ -99,20 +118,44 @@ export const verifyPassword = async (playlistId, password) => {
   }
 }
 
-export const joinPlaylist = async (playlistId, userId, spotifyUserId) => {
+export const createPlaylist = async (userId, title, songCount, password) => {
   try {
     const {apiToken} = parseCookies();
     
     const playlist = await axios({
       method: 'post',
-      url: '/api/playlists/join',
+      url: '/api/playlists',
+      headers: {
+        'Authorization': `Bearer ${apiToken}`
+      },
+      data: {
+        userId,
+        title,
+        songCount,
+        password
+      }
+    });
+
+    return playlist.data
+  }
+  catch(err) {
+    throw err
+  }
+}
+
+export const saveTracks = async (playlistId, userId) => {
+  try {
+    const {apiToken} = parseCookies();
+    
+    const playlist = await axios({
+      method: 'post',
+      url: '/api/tracks',
       headers: {
         'Authorization': `Bearer ${apiToken}`
       },
       data: {
         playlistId,
-        userId,
-        spotifyUserId
+        userId
       }
     })
 

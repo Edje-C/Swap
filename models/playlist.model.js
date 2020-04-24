@@ -18,11 +18,13 @@ const playlistSchema = new Schema(
       type: String,
       required: true,
       trim: true,
-      minlength: 3
+      minlength: 1
     },
     songCount: {
       type: Number,
-      required: true
+      required: true,
+      min: 1,
+      max: 50
     },
     spotifyPlaylistId: {
       type: String
@@ -45,5 +47,7 @@ const playlistSchema = new Schema(
 );
 
 const Playlist = mongoose.model('Playlist', playlistSchema);
+
+Playlist.createCollection();
 
 module.exports = Playlist;

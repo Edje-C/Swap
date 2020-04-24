@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { useParams } from 'react-router-dom'
 import styled from 'styled-components';
 import { fontSizes, fontWeights, colors, boxShadows } from '../globalStyles';
-import { joinPlaylist, verifyPassword } from '../api';
+import { saveTracks, verifyPassword } from '../api';
 
 class Join extends Component {
   constructor(props) {
@@ -30,8 +30,7 @@ class Join extends Component {
       const passwordIsCorrect = verifyPasswordResponse.data;
 
       if(passwordIsCorrect) {
-        const playlist = await joinPlaylist(this.state.playlistId, this.props.userId, this.props.userSpotifyId);
-        console.log('playlist', playlist);
+        const playlist = await saveTracks(this.state.playlistId, this.props.userId);
       }
       else {
         console.log('Error: Password is incorrect.')

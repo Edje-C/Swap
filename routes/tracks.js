@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { saveTracks } = require('../functions/tracks');
 const { getPlaylistByPlaylistId } = require('../functions/playlists');
-const { getPlaylistTracks } = require('../lib/spotify');
+const { getAccessToken, getPlaylistTracks } = require('../lib/spotify');
 const { tokenRequired, loginRequired } = require('../lib/helpers');
 
 router.post('/', tokenRequired, loginRequired, async (req, res) => {
@@ -20,11 +20,11 @@ router.post('/', tokenRequired, loginRequired, async (req, res) => {
       throw `Error: Couldn't find playlist.`;
     }
 
-    const uris = getPlaylistTracks(playlist.songCount, accessToken);
-
+    const uris = await getPlaylistTracks(playlist.songCount, accessToken);
+    
     if(uris && uris.length) {
-      const collaboration = await saveTracks(playlistId, userId, uris);
-      res.json(collaboration);
+      await saveTracks(playlistId, userId, uris);
+      res.json(true);
     }
     else {
       throw `Error: Couldn't collect tracks.`;

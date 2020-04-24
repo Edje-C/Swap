@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import styled from 'styled-components';
 import moment from "moment";
 import { colors, fontSizes, fontWeights, boxShadows } from "../globalStyles";
-import { getPlaylists } from "../api";
+import { getPlaylists, getPlaylist } from "../api";
 import { samplePlaylist } from "../sampleData";
 import NewPlaylist from "../components/newPlaylist";
 import SharePlaylist from "../components/sharePlaylist";
@@ -42,7 +42,11 @@ class Playlist extends Component {
           })
         }}
       >
-        <NewPlaylist/>
+        <NewPlaylist
+          userId={this.props.userId}
+          displayName={this.props.displayName}
+          spotifyId={this.props.spotifyId}
+        />
       </ModalBackground>
     )
   }
@@ -64,23 +68,27 @@ class Playlist extends Component {
         <SharePlaylist
           playlist={playlist}
           passwordHasExpired={passwordHasExpired}
+          userId={this.props.userId}
+          displayName={this.props.displayName}
+          spotifyId={this.props.displspotifyId}
         />
       </ModalBackground>
     )
   }
 
   renderPlaylists = () => {
+    console.log(this.state)
     return this.state.playlists.map((playlist, index) => {
       return (
         <PlaylistCard>
           <PlaylistTitle href={playlist.link}>{playlist.title}</PlaylistTitle>
           <PlaylistDetails>
-            <PlaylistByLine>{playlist.creator.spotifyId}</PlaylistByLine>
+            <PlaylistByLine>{playlist.creator.displayName}</PlaylistByLine>
             <PlaylistDate>
               {moment(playlist.createdAt).format('LL')}
             </PlaylistDate>
           </PlaylistDetails>
-          <PlaylistLink href={playlist.link}>{playlist.link.replace('https://open.', '')}</PlaylistLink>
+          {/* <PlaylistLink href={playlist.link}>{playlist.link.replace('https://open.', '')}</PlaylistLink> */}
           <ShareButton 
             onClick={() => {
               this.setState({

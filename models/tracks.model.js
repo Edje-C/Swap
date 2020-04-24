@@ -26,4 +26,6 @@ const tracksSchema = new Schema(
 
 const Tracks = mongoose.model('Tracks', tracksSchema);
 
+Tracks.createCollection();
+
 module.exports = Tracks;

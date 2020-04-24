@@ -25,7 +25,6 @@ router.get('/', tokenRequired, loginRequired, async (req, res) => {
 
 router.get('/:id', tokenRequired, loginRequired, async (req, res) => {
   try {
-    console.log('user', req.user, req.session.passport.user)
     const user = await getUserById(req.params.id);
     res.json(user);
   }

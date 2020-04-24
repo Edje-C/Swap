@@ -1,7 +1,9 @@
 import React, { Component } from "react";
 import styled from 'styled-components';
+import passwordGenerator from 'generate-password';
 import { colors, fontSizes, fontWeights, boxShadows } from "../globalStyles";
 import { copyToClipboard } from "../functions";
+import { createPlaylist } from "../api";
 
 
 class NewPlaylist extends Component {
@@ -28,7 +30,7 @@ class NewPlaylist extends Component {
     })
   }
 
-  onSubmit = () => {
+  onSubmit = async () => {
     const { title, songCount } = this.state;
 
     if(!title) {
@@ -46,8 +48,16 @@ class NewPlaylist extends Component {
       })
     }
     else {
+      const password = passwordGenerator.generate({
+        numbers: true,
+        strict: true,
+        length: 16
+      });
+
+      await createPlaylist(this.props.userId, this.state.title, this.state.songCount, password);
+
       this.setState({
-        passwordText: 'uEyMTw32v9F8dd7H'
+        passwordText: password
       })
     }
   }
@@ -93,7 +103,7 @@ class NewPlaylist extends Component {
       <>
         <Title>Success!</Title>
         <Message>Here's your playlist password, collaborators will need it to join this swap.</Message>
-        <Message>It will expire in 24 hours!</Message>
+        <ExpireMessage>It will expire in 24 hours!</ExpireMessage>
         <PasswordButton
           onClick={() => {
             const password = this.state.passwordText;
@@ -230,6 +240,10 @@ const SubmitButton = styled.button`
 const Message = styled.p`
   max-width: 350px;
   margin: 0px auto 10px;
+`;
+
+const ExpireMessage = styled(Message)`
+  color: ${colors.purple};
 `;
 
 const PasswordButton = styled.button`

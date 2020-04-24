@@ -42,6 +42,14 @@ class SharePlaylist extends Component {
       this.setState({passwordText: password});
     }
   }
+  
+  renderCollaborators = (collaborators) => {
+    return collaborators.map(collaborator => {
+      return (
+        <Collaborator>{collaborator.displayName}</Collaborator>
+      )
+    })
+  }
 
   render() {
     return (
@@ -49,106 +57,42 @@ class SharePlaylist extends Component {
         onClick={(event)=> 
           event.stopPropagation()}
       >
-        <Header>
-          <Title>{this.props.playlist.title}</Title>
-          <Link
-            onClick={() => {
-              copyToClipboard(`http://localhost:3000/playlists/${this.props.playlist._id}`);
-            }}
-          >
-            {`http://localhost:3000/playlists/${this.props.playlist._id}`}
-            <LinkCopy>copy</LinkCopy>
-          </Link>
-        </Header>
         <Details>
-          <Detail>creator: <DetailSpan>{this.props.playlist.creator && this.props.playlist.creator.spotifyId || ''}</DetailSpan></Detail>
-          <Detail>date: <DetailSpan>{moment(this.props.playlist.createdAt).format('LL')}</DetailSpan></Detail>
-          <Detail>collaborators: <DetailSpan>{this.props.playlist.collaborators}</DetailSpan></Detail>
-          <Detail>password expiry: <DetailSpan urgent={this.props.passwordHasExpired}>{moment(this.props.playlist.passwordExpiration).format('LLL')}</DetailSpan></Detail>
-          <PasswordButton
-            onClick={this.onPasswordButtonClick}
-          >
-            {this.state.passwordText ? this.state.passwordText : 'generate new password'}
-          </PasswordButton>
+          <Title>{this.props.playlist.title}</Title>
+          <TextGroup>
+            <DetailLabel>creator</DetailLabel>
+            <DetailSpan>{this.props.playlist.creator.displayName}</DetailSpan>
+          </TextGroup>
+          <TextGroup>
+            <DetailLabel>date</DetailLabel>
+            <DetailSpan>{moment(this.props.playlist.createdAt).format('LL')}</DetailSpan>
+          </TextGroup>
+          <TextGroup>
+            <DetailLabel>password expiry</DetailLabel>
+            <DetailSpan urgent={this.props.passwordHasExpired}>{moment(this.props.playlist.passwordExpiration).format('LLL')}</DetailSpan>
+          </TextGroup>
+          <TextGroup>
+            <DetailLabel>password</DetailLabel>
+            <PasswordButton
+              onClick={this.onPasswordButtonClick}
+            >
+              {this.state.passwordText ? this.state.passwordText : 'generate new password'}
+            </PasswordButton>
+          </TextGroup>
+          <TextGroup>
+            <DetailLabel>collaborators</DetailLabel>
+            <CollaboratorsContainer>
+              {this.props.playlist.collaborators.length ?
+                this.renderCollaborators(this.props.playlist.collaborators) :
+                <DetailSpan>0</DetailSpan>
+              }
+            </CollaboratorsContainer>
+          </TextGroup>
         </Details>
       </Content>
     );
   }
 }
-
-
-const Header = styled.div`
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 30px;
-  padding-bottom: 20px;
-  border-bottom: 1px solid ${colors.opaqueBlue};
-`;
-
-const Title = styled.p`
-  color: ${colors.darkGray};
-  font-size: ${fontSizes.large};
-  font-weight: ${fontWeights.regular};
-  margin-bottom: 10px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-`;
-
-const Link = styled.button`
-  background: ${colors.lightGray};
-  color: ${colors.opaqueBlack};
-  font-size: ${fontSizes.xsmall};
-  font-weight: ${fontWeights.semiLight};
-  padding: 5px 68px 5px 8px;
-  border-radius: 3px;
-  position: relative;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-
-  &:hover {
-    color: ${colors.gray};
-  }
-`;
-
-const LinkCopy = styled.p`
-  width: 60px;
-  height: 100%;
-  background: ${colors.lightBlue};
-  color: ${colors.white};
-  font-weight: ${fontWeights.semiLight};
-  padding: 5px 8px;
-  position: absolute;
-  top: 0;
-  right: 0;
-
-  ${Link}:hover & {
-    color: ${colors.white};
-  }
-`;
-
-const Details = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
-
-const Detail = styled.p`
-  margin-bottom: 20px;
-`;
-
-const DetailSpan = styled.span`
-  color: ${props => props.urgent ? colors.purple : colors.darkBlue};
-`;
-
-const PasswordButton = styled.button`
-  width: 100%;
-  background: none;
-  color: ${colors.opaqueBlue};
-  font-size: ${fontSizes.xsmall};
-  margin-top: 20px;
-  padding: 5px 0px;
-`;
 
 const Content = styled.div`
   width: 500px;
@@ -172,5 +116,60 @@ const Content = styled.div`
       margin-top: 0px;
     }
 `;
+
+const Title = styled.p`
+  color: ${colors.darkGray};
+  font-size: ${fontSizes.large};
+  font-weight: ${fontWeights.regular};
+  margin-bottom: 10px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
+const Details = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const TextGroup = styled.div`
+  display: flex;
+  margin-bottom: 20px;
+`;
+
+const DetailLabel = styled.p`
+`;
+
+const DetailSpan = styled.span`
+  color: ${props => props.urgent ? colors.purple : colors.darkBlue};
+  padding: 0px 5px;
+`;
+
+const PasswordButton = styled.button`
+  width: fit-content;
+  background: none;
+  color: ${colors.opaqueBlue};
+  font-size: ${fontSizes.xsmall};
+  padding: 0px 5px;
+`;
+
+const CollaboratorsContainer = styled.div`
+  width: 200px;
+  height: 100px;
+  background: ${colors.lightGray};
+  margin: 5px 10px;
+  padding: 20px 20px 10px;
+  border-radius: 10px;
+  overflow: scroll;
+`;
+
+const Collaborator = styled.p`
+  color: ${colors.opaqueBlack};
+  margin-bottom: 10px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`
+
 
 export default SharePlaylist;

@@ -1,17 +1,84 @@
 const Playlist = require('../models/playlist.model');
 const Tracks = require('../models/tracks.model');
 const { createHash, comparePass } = require('../lib/helpers');
+const { getPlaylistTracks } = require('../lib/spotify');
 
 const getFullPlaylistByUserId = async (userId) => {
   try {
-    return await Playlist.aggregate([
+    return await Tracks.aggregate([
       {
         $lookup: {
-          from: 'collaborations',
-          localField: '_id',
-          foreignField: 'playlistId',
-          as: 'collaborations'
-        },
+          from: 'playlists',
+          localField: 'playlistId',
+          foreignField: '_id',
+          as: 'playlist'
+        }
+      },
+      {
+        $unwind: '$playlist'
+      },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'playlist.creatorId',
+          foreignField: '_id',
+          as: 'creator'
+        }
+      },
+      {
+        $unwind: '$creator'
+      },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'userId',
+          foreignField: '_id',
+          as: 'collaborator'
+        }
+      },
+      {
+        $unwind: '$collaborator'
+      },
+      {
+        $group: {
+          _id: '$playlistId',
+          collaborators: {
+            $addToSet: '$collaborator'
+          },
+          creator: {$first: '$creator'},
+          creatorId: {$first: '$playlist.creatorId'},
+          title: {$first: '$playlist.title'},
+          songCount: {$first: '$playlist.songCount'},
+          password: {$first: '$playlist.password'},
+          passwordExpiration: {$first: '$playlist.passwordExpiration'},
+          createdAt: {$first: '$playlist.createdAt'},
+          updatedAt: {$first: '$playlist.updatedAt'},
+          updatedAt: {$first: '$playlist.updatedAt'},
+        }
+      },
+      {
+        $match: {
+          collaborators: {
+            $elemMatch: {
+              _id: userId
+            }
+          }
+        }
+      }
+    ]);
+  }
+  catch(err) {
+    throw err
+  }
+};
+
+const getFullPlaylistByPlaylistId = async (playlistId) => {
+  try{
+    return await Playlist.aggregate([
+      {
+        $match: {
+          _id: playlistId
+        }
       },
       {
         $lookup: {
@@ -22,70 +89,51 @@ const getFullPlaylistByUserId = async (userId) => {
         }
       },
       {
-        $match: {
-          'creatorId': userId
-        }
-      },
-      {
         $unwind: '$creator'
       },
       {
-        $addFields: {
-          collaborators: {
-            $size: '$collaborations'
-          }
+        $lookup: {
+          from: 'tracks',
+          localField: '_id',
+          foreignField: 'playlistId',
+          as: 'tracks'
         }
       },
       {
-        $unset: ['password', 'updatedAt', 'songCount', 'creatorId', 'collaborations']
-      }
-    ])
-  }
-  catch(err) {
-    throw err
-  }
-};
-
-const getFullPlaylistByPlaylistId = async (playlistId) => {
-  try{
-    return await Playlist.aggregate([
-        {
-          $lookup: {
-            from: 'collaborations',
-            localField: '_id',
-            foreignField: 'playlistId',
-            as: 'collaborations'
-          },
-        },
-        {
-          $lookup: {
-            from: 'users',
-            localField: 'creatorId',
-            foreignField: '_id',
-            as: 'creator'
-          }
-        },
-        {
-          $match: {
-            '_id': playlistId
-          }
-        },
-        {
-          $unwind: '$creator'
-        },
-        {
-          $addFields: {
-            collaborators: {
-              $size: '$collaborations'
-            }
-          }
-        },
-        {
-          $unset: ['password', 'updatedAt', 'songCount', 'creatorId', 'collaborations']
+        $unwind: '$tracks'
+      },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'tracks.userId',
+          foreignField: '_id',
+          as: 'collaborator'
         }
-      ])
+      },
+      {
+        $unwind: '$collaborator'
+      },
+      {
+        $group: {
+          _id: '$_id',
+          collaborators: {
+            $addToSet: '$collaborator'
+          },
+          creator: {$first: '$creator'},
+          creatorId: {$first: '$creatorId'},
+          title: {$first: '$title'},
+          songCount: {$first: '$songCount'},
+          password: {$first: '$password'},
+          passwordExpiration: {$first: '$passwordExpiration'},
+          createdAt: {$first: '$createdAt'},
+          updatedAt: {$first: '$updatedAt'},
+          updatedAt: {$first: '$updatedAt'},
+        }
+      }
+    ]);
   }
   catch(err) {
+    console.log(err)
     throw err
   }
 };
@@ -110,27 +158,29 @@ const createPlaylist = async (creatorId, title, songCount, password, accessToken
     throw err
   }
 
-  const session = await User.startSession();
+  const session = await Playlist.startSession();
   session.startTransaction();
 
   try {
     const opts = { session };
-    const playlist = await Playlist.create(
-      {
+    const createdPlaylist = await Playlist.create(
+      [{
         creatorId,
         title,
         songCount,
         password: newPassword
-      },
+      }],
       opts
     );
 
+    const playlist = createdPlaylist[0];
+
     await Tracks.create(
-      {
-        id: playlist._id,
-        creatorId,
+      [{
+        playlistId: playlist._id,
+        userId: creatorId,
         uris
-      },
+      }],
       opts
     );
 
@@ -139,6 +189,7 @@ const createPlaylist = async (creatorId, title, songCount, password, accessToken
 
     return playlist;
   } catch (err) {
+    console.log('err')
     await session.abortTransaction();
     session.endSession();
 

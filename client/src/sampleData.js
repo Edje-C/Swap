@@ -3,7 +3,17 @@ export const samplePlaylist = {
   title: "Playlist Test 1",
   link: "spotify:playlist:1p9rm1bSgbVwNtvdzyhTcT",
   spotifyPlaylistId: "https://open.spotify.com/playlist/1p9rm1bSgbVwNtvdzyhTcT",
-  collaborators: 0,
+  collaborators: [
+    {
+      displayName: 'oneSlickUser'
+    }, 
+    {
+      displayName: 'Thomas Helper'
+    }, 
+    {
+      displayName: 'youSou'
+    }
+  ],
   passwordExpiration: "2020-04-18T07:24:01.997Z",
   createdAt: "2020-04-17T07:24:02.007Z",
   creator: {

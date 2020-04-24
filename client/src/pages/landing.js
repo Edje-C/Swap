@@ -11,7 +11,7 @@ class Landing extends Component {
           <Heading>Swap</Heading>
           <SubHeading>A Playlist Generator</SubHeading>
           <Message>Generate a playlist for you and your friends with songs from each of your Spotify accounts so that everyone can enjoy the music.</Message>
-          <EnterButton href="/api/spotify/auth">Enter</EnterButton>
+          <EnterLink href="/api/spotify/auth"><EnterButton>Enter</EnterButton></EnterLink>
         </Content>
       </Container>
     );
@@ -87,11 +87,13 @@ const Message = styled.p`
   margin-bottom: 50px
 `;
 
-const EnterButton = styled.a`
+const EnterLink = styled.a``;
+
+const EnterButton = styled.button`
   width: 200px;
   background: none;
   font-size: ${fontSizes.medium};
-  padding: 8px 0px;
+  padding: 10px 0px;
   border: 2px solid ${colors.purple};
   border-radius: 50px;
   text-align: center;
