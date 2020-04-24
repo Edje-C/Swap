@@ -4,6 +4,7 @@ import passwordGenerator from 'generate-password';
 import { colors, fontSizes, fontWeights, boxShadows } from "../globalStyles";
 import { copyToClipboard } from "../functions";
 import { createPlaylist } from "../api";
+import Button from "./button";
 
 
 class NewPlaylist extends Component {
@@ -130,44 +131,14 @@ class NewPlaylist extends Component {
 
   render() {
     return (
-      <Content
-        onClick={(event)=> 
-          event.stopPropagation()}
-        center={this.state.passwordText}
-      >
+      <>
         {this.state.passwordText ?
           this.renderPassword():
           this.renderCreate()}
-      </Content>
+      </>
     );
   }
 }
-
-
-const Content = styled.div`
-  width: 500px;
-  height: 500px;
-  background: ${colors.white};
-  color: ${colors.gray};
-  font-size: ${fontSizes.xsmall};
-  display: flex;
-  flex-direction: column;
-  justify-content: ${props => props.center ? 'center' : 'start'};
-  text-align: ${props => props.center ? 'center' : 'left'};
-  padding: 50px;
-  border-radius: 10px;
-  box-shadow: ${boxShadows.blue2};
-
-  animation: .1s ease slidein;
-
-  @keyframes slidein {
-    0% {
-      margin-top: 100px;
-    },
-    100% {
-      margin-top: 0px;
-    }
-`;
 
 const Title = styled.p`
   color: ${colors.darkGray};
@@ -187,6 +158,7 @@ const TextGroup = styled.div`
 
 const Label = styled.p`
   color: ${colors.gray};
+  text-align: left;
 `;
 
 const Input = styled.input`
@@ -221,7 +193,7 @@ const ErrorMessage = styled.p`
   font-size: ${fontSizes.xsmall};
 `;
 
-const SubmitButton = styled.button`
+const SubmitButton = styled(Button)`
   width: 150px;
   background: ${colors.lightBlue};
   color: ${colors.white};

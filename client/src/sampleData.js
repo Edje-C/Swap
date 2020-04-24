@@ -1,8 +1,8 @@
 export const samplePlaylist = {
   _id: "82a85c38-532a-45e8-bc3b-0bedd4633a9e",
   title: "Playlist Test 1",
-  link: "spotify:playlist:1p9rm1bSgbVwNtvdzyhTcT",
-  spotifyPlaylistId: "https://open.spotify.com/playlist/1p9rm1bSgbVwNtvdzyhTcT",
+  link: "https://open.spotify.com/playlist/1p9rm1bSgbVwNtvdzyhTcT",
+  spotifyPlaylistId: "1p9rm1bSgbVwNtvdzyhTcT",
   collaborators: [
     {
       displayName: 'oneSlickUser'

@@ -5,9 +5,10 @@ import moment from "moment";
 import { colors, fontSizes, fontWeights, boxShadows } from "../globalStyles";
 import { copyToClipboard } from "../functions";
 import { updatePassword } from "../api";
+import Button from "./button";
 
 
-class SharePlaylist extends Component {
+class PlaylistDetails extends Component {
   constructor(props) {
     super(props);
 
@@ -53,26 +54,28 @@ class SharePlaylist extends Component {
 
   render() {
     return (
-      <Content
-        onClick={(event)=> 
-          event.stopPropagation()}
-      >
+      <>
         <Details>
           <Title>{this.props.playlist.title}</Title>
           <TextGroup>
-            <DetailLabel>creator</DetailLabel>
+            <DetailLabel>creator : </DetailLabel>
             <DetailSpan>{this.props.playlist.creator.displayName}</DetailSpan>
           </TextGroup>
           <TextGroup>
-            <DetailLabel>date</DetailLabel>
+            <DetailLabel>date : </DetailLabel>
             <DetailSpan>{moment(this.props.playlist.createdAt).format('LL')}</DetailSpan>
           </TextGroup>
+          {this.props.playlist.link ? 
+            <TextGroup>
+              <DetailLabel>link : </DetailLabel>
+              <DetailLink>{this.props.playlist.link}</DetailLink>
+            </TextGroup> : null}
           <TextGroup>
-            <DetailLabel>password expiry</DetailLabel>
+            <DetailLabel>password expiry : </DetailLabel>
             <DetailSpan urgent={this.props.passwordHasExpired}>{moment(this.props.playlist.passwordExpiration).format('LLL')}</DetailSpan>
           </TextGroup>
           <TextGroup>
-            <DetailLabel>password</DetailLabel>
+            <DetailLabel>password : </DetailLabel>
             <PasswordButton
               onClick={this.onPasswordButtonClick}
             >
@@ -80,7 +83,7 @@ class SharePlaylist extends Component {
             </PasswordButton>
           </TextGroup>
           <TextGroup>
-            <DetailLabel>collaborators</DetailLabel>
+            <DetailLabel>collaborators : </DetailLabel>
             <CollaboratorsContainer>
               {this.props.playlist.collaborators.length ?
                 this.renderCollaborators(this.props.playlist.collaborators) :
@@ -88,40 +91,18 @@ class SharePlaylist extends Component {
               }
             </CollaboratorsContainer>
           </TextGroup>
+          {this.props.playlist.link ? null : <SaveButton>Save Playlist</SaveButton>}
         </Details>
-      </Content>
+      </>
     );
   }
 }
-
-const Content = styled.div`
-  width: 500px;
-  height: 500px;
-  background: ${colors.white};
-  color: ${colors.gray};
-  font-size: ${fontSizes.xsmall};
-  display: flex;
-  flex-direction: column;
-  padding: 50px;
-  border-radius: 10px;
-  box-shadow: ${boxShadows.blue2};
-
-  animation: .1s ease slidein;
-
-  @keyframes slidein {
-    0% {
-      margin-top: 100px;
-    },
-    100% {
-      margin-top: 0px;
-    }
-`;
 
 const Title = styled.p`
   color: ${colors.darkGray};
   font-size: ${fontSizes.large};
   font-weight: ${fontWeights.regular};
-  margin-bottom: 10px;
+  margin-bottom: 15px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -134,23 +115,41 @@ const Details = styled.div`
 
 const TextGroup = styled.div`
   display: flex;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
 `;
 
 const DetailLabel = styled.p`
+  color: ${colors.gray};
+  margin-right: 5px;
 `;
 
 const DetailSpan = styled.span`
   color: ${props => props.urgent ? colors.purple : colors.darkBlue};
-  padding: 0px 5px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+  text-align: left;
+`;
+
+const DetailLink = styled.a`
+  color: ${colors.opaqueBlue};
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+  text-align: left;
+
+  &:hover {
+    color: ${colors.blue};
+  }
 `;
 
 const PasswordButton = styled.button`
-  width: fit-content;
+  width: 19ch;
   background: none;
-  color: ${colors.opaqueBlue};
+  color: ${colors.gray};
   font-size: ${fontSizes.xsmall};
-  padding: 0px 5px;
 `;
 
 const CollaboratorsContainer = styled.div`
@@ -161,6 +160,7 @@ const CollaboratorsContainer = styled.div`
   padding: 20px 20px 10px;
   border-radius: 10px;
   overflow: scroll;
+  text-align: left;
 `;
 
 const Collaborator = styled.p`
@@ -171,5 +171,10 @@ const Collaborator = styled.p`
   white-space: nowrap;
 `
 
+const SaveButton = styled(Button)`
+  background: ${colors.opaqueBlue};
+  color: ${colors.white};
+  margin: 20px 0px 0px auto;
+`;
 
-export default SharePlaylist;
+export default PlaylistDetails;

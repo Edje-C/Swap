@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Link as ReactLink } from 'react-router-dom'
-import { colors, fontSizes, images, fontWeights } from '../globalStyles';
+import { colors, fontSizes, images } from '../globalStyles';
 
 const Header = () => {
   return (
@@ -38,9 +38,8 @@ const Links = styled.div`
   display: flex;
 `;
 
-const Link = styled.p`
+const Link = styled.a`
   font-size: ${fontSizes.small};
-  font-weight: ${fontWeights.regular};
   color: ${colors.white};
   cursor: pointer;
 

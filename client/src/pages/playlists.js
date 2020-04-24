@@ -2,10 +2,13 @@ import React, { Component } from "react";
 import styled from 'styled-components';
 import moment from "moment";
 import { colors, fontSizes, fontWeights, boxShadows } from "../globalStyles";
-import { getPlaylists, getPlaylist } from "../api";
+import { getPlaylists } from "../api";
 import { samplePlaylist } from "../sampleData";
+import Modal from "../components/modal";
 import NewPlaylist from "../components/newPlaylist";
-import SharePlaylist from "../components/sharePlaylist";
+import PlaylistDetails from "../components/playlistDetails";
+import JoinPlaylist from "../components/joinPlaylist";
+import Button from "../components/button";
 
 class Playlist extends Component {
   constructor(props) {
@@ -14,6 +17,7 @@ class Playlist extends Component {
     this.state = {
       renderPlaylistDetailsModal: false,
       renderNewPlaylistModal: false,
+      renderJoinPlaylistModal: false,
       playlists: [samplePlaylist, samplePlaylist, samplePlaylist, samplePlaylist, samplePlaylist],
       selectedPlaylist: -1,
       newPassword: ''
@@ -35,10 +39,10 @@ class Playlist extends Component {
 
   renderNewPlaylistModal = () => {
     return (
-      <ModalBackground 
-        onClick={(event) => {
+      <Modal
+        onClick={() => {
           this.setState({
-            renderNewPlaylistModal: false
+            renderNewPlaylistModal:false
           })
         }}
       >
@@ -47,7 +51,7 @@ class Playlist extends Component {
           displayName={this.props.displayName}
           spotifyId={this.props.spotifyId}
         />
-      </ModalBackground>
+      </Modal>
     )
   }
 
@@ -56,23 +60,39 @@ class Playlist extends Component {
     const passwordHasExpired = new Date(playlist.passwordExpiration) <= new Date();
 
     return (
-      <ModalBackground 
-        onClick={(event) => {
+      <Modal
+        onClick={() => {
           this.setState({
-            renderPlaylistDetailsModal: false,
-            selectedPlaylist: -1,
-            newPassword: ''
+            renderPlaylistDetailsModal:false
           })
         }}
       >
-        <SharePlaylist
+        <PlaylistDetails
           playlist={playlist}
           passwordHasExpired={passwordHasExpired}
           userId={this.props.userId}
           displayName={this.props.displayName}
           spotifyId={this.props.displspotifyId}
         />
-      </ModalBackground>
+      </Modal>
+    )
+  }
+
+  renderJoinPlaylistModal = () => {
+    return (
+      <Modal
+        onClick={() => {
+          this.setState({
+            renderJoinPlaylistModal:false
+          })
+        }}
+      >
+        <JoinPlaylist
+          userId={this.props.userId}
+          displayName={this.props.displayName}
+          spotifyId={this.props.displspotifyId}
+        />
+      </Modal>
     )
   }
 
@@ -82,13 +102,10 @@ class Playlist extends Component {
       return (
         <PlaylistCard>
           <PlaylistTitle href={playlist.link}>{playlist.title}</PlaylistTitle>
-          <PlaylistDetails>
-            <PlaylistByLine>{playlist.creator.displayName}</PlaylistByLine>
-            <PlaylistDate>
-              {moment(playlist.createdAt).format('LL')}
-            </PlaylistDate>
-          </PlaylistDetails>
-          {/* <PlaylistLink href={playlist.link}>{playlist.link.replace('https://open.', '')}</PlaylistLink> */}
+          <PlaylistDetail>{playlist.creator.displayName}</PlaylistDetail>
+          <PlaylistDetail>
+            {moment(playlist.createdAt).format('LL')}
+          </PlaylistDetail>
           <ShareButton 
             onClick={() => {
               this.setState({
@@ -109,17 +126,29 @@ class Playlist extends Component {
       <Container>
         {this.state.renderPlaylistDetailsModal && this.renderPlaylistDetailsModal()}
         {this.state.renderNewPlaylistModal && this.renderNewPlaylistModal()}
+        {this.state.renderJoinPlaylistModal && this.renderJoinPlaylistModal()}
         <Header>
           <Heading>{this.props.displayName}</Heading>
-          <NewPlaylistButton
-            onClick={() => {
-              this.setState({
-                renderNewPlaylistModal: true
-              });
-            }}
-          >
-              New Swap
-          </NewPlaylistButton>
+          <HeaderButtons>
+            <JoinPlaylistButton
+              onClick={() => {
+                this.setState({
+                  renderJoinPlaylistModal: true
+                });
+              }}
+            >
+              Join
+            </JoinPlaylistButton>
+            <NewPlaylistButton
+              onClick={() => {
+                this.setState({
+                  renderNewPlaylistModal: true
+                });
+              }}
+            >
+              Create
+            </NewPlaylistButton>
+          </HeaderButtons>
         </Header>
         <Playlists>
           {this.renderPlaylists()}
@@ -152,22 +181,32 @@ const Heading = styled.p`
   font-size: ${fontSizes.xlarge};
 `;
 
-const NewPlaylistButton = styled.button`
-  width: 200px;
+const HeaderButtons = styled.div`
+  display: flex;
+`;
+
+const JoinPlaylistButton = styled(Button)`
   background: none;
   border: 2px solid ${colors.white};
   color: ${colors.white};
-  font-size: ${fontSizes.regular};
-  padding: 15px 0px;
-  border-radius: 50px;
-  box-shadow:  ${boxShadows.blue1};
-  transition: all .2s ease;
 
   &:hover {
-    box-shadow:  ${boxShadows.blue2};
     background: ${colors.purple};
     color: ${colors.white};
     border: 2px solid ${colors.purple};
+  }
+`;
+
+const NewPlaylistButton = styled(Button)`
+  background: none;
+  border: 2px solid ${colors.white};
+  color: ${colors.white};
+  margin-left: 20px;
+  
+  &:hover {
+    background: ${colors.lightBlue};
+    color: ${colors.white};
+    border: 2px solid ${colors.lightBlue};
   }
 `;
 
@@ -201,86 +240,28 @@ const PlaylistTitle = styled.p`
   white-space: nowrap;
 `
 
-const PlaylistDetails = styled.div`
+const PlaylistDetail = styled.div`
   width: 90%;
   color: ${colors.opaqueWhite3};
   font-size: ${fontSizes.xsmall};
-  font-size: ${fontWeights.light};
   display: flex;
   justify-content: space-between;
-  margin-bottom: 20px;
-`
-
-const PlaylistByLine = styled.p`
+  margin-bottom: 5px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-`;
-
-const PlaylistDate = styled.p`
-  margin-left: 10px
-`;
-
-const PlaylistLink = styled.a`
-  width: min-content;
-  max-width: 70%;
-  font-size: ${fontSizes.small};
-  margin-bottom: 40px;
-  color: ${colors.opaqueBlue};
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  
-  &::after {
-    content: '';
-    width: 60%;
-    height: 2px;
-    background: ${colors.opaqueBlue};
-    display: flex;
-    margin-top: 2px;
-    transition: all .2s ease;
-  }
-  
-  &:hover {
-    color: ${colors.blue};
-  }
-  
-  &:hover::after {
-    width: 100%;
-    background: ${colors.blue};
-  }
 `
 
-const ShareButton = styled.button`
-  width: 150px;
+const ShareButton = styled(Button)`
   background: ${colors.opaqueWhite1};
   color: ${colors.opaqueBlue};
-  font-size: ${fontSizes.small};
-  margin-left: auto;
-  padding: 8px 0px;
+  margin: 30px 0px 0px auto;
   border: 2px solid transparent;
-  border-radius: 50px;
-  box-shadow: ${boxShadows.blue1};
-  transition: all .3s ease;
 
   &:hover {
     color: ${colors.purple};
     background: ${colors.white};
-    box-shadow: ${boxShadows.blue2};
   }
-`;
-
-const ModalBackground = styled.div`
-  width: 100%;
-  height: 100%;
-  background: ${colors.opaqueBlack};
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 10;
 `;
 
 export default Playlist;

@@ -56,23 +56,6 @@ router.post('/update-password', tokenRequired, loginRequired, async (req, res) =
   }
 })
 
-router.post('/verify-password', tokenRequired, loginRequired, async (req, res) => {
-  const {playlistId, password} = req.body;
-
-  if(!(playlistId && password)) {
-    return res.status(422).json(`Error: Request missing data.`);
-  }
-
-  try {
-    const passwordIsCorrect = await verifyPlaylistPassword(playlistId, password);
-
-    res.json(passwordIsCorrect)
-  }
-  catch(err) {
-    res.status(500).json(err)
-  }
-})
-
 router.post('/', tokenRequired, loginRequired, async (req, res) => {
   const {userId, title, songCount, password} = req.body;
 

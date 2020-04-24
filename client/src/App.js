@@ -8,7 +8,6 @@ import { colors } from './globalStyles';
 
 import Landing from './pages/landing';
 import Playlist from './pages/playlists';
-import Join from './pages/join';
 import Error from './pages/error';
 import Header from './components/header';
 import Footer from './components/footer';
@@ -75,13 +74,6 @@ class App extends Component {
         <Switch>
           <Route exact path="/">
             {this.renderHomePage()}
-          </Route>
-          <Route path="/swaps/:id">
-            <Join
-              userId={this.state.userId}
-              userSpotifyId={this.state.userSpotifyId}
-              displayName={this.state.displayName}
-            />
           </Route>
           <Route path="/how">
             <How />

@@ -143,7 +143,7 @@ export const createPlaylist = async (userId, title, songCount, password) => {
   }
 }
 
-export const saveTracks = async (playlistId, userId) => {
+export const saveTracks = async (key, userId) => {
   try {
     const {apiToken} = parseCookies();
     
@@ -154,7 +154,7 @@ export const saveTracks = async (playlistId, userId) => {
         'Authorization': `Bearer ${apiToken}`
       },
       data: {
-        playlistId,
+        key,
         userId
       }
     })
