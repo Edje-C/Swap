@@ -37,6 +37,36 @@ class Playlist extends Component {
     }
   }
 
+  addPlaylistToState = (playlist) => {
+    const updatedPlaylists = [
+      ...this.state.playlists
+    ]
+
+    updatedPlaylists.unshift(playlist)
+
+    this.setState({
+      playlists: updatedPlaylists,
+      selectedPlaylist: this.state.selectedPlaylist + 1
+    })
+  }
+
+  updatePlaylistLink = (link) => {
+    const updatedPlaylists = [
+      ...this.state.playlists
+    ]
+    const updatedPlaylist = {
+      ...this.state.playlists[this.state.selectedPlaylist]
+    }
+
+    updatedPlaylist['link'] = link;
+
+    updatedPlaylists[this.state.selectedPlaylist] = updatedPlaylist
+
+    this.setState({
+      playlists: updatedPlaylists
+    })
+  }
+
   renderNewPlaylistModal = () => {
     return (
       <Modal
@@ -50,6 +80,7 @@ class Playlist extends Component {
           userId={this.props.userId}
           displayName={this.props.displayName}
           spotifyId={this.props.spotifyId}
+          addPlaylistToState={this.addPlaylistToState}
         />
       </Modal>
     )
@@ -72,7 +103,8 @@ class Playlist extends Component {
           passwordHasExpired={passwordHasExpired}
           userId={this.props.userId}
           displayName={this.props.displayName}
-          spotifyId={this.props.displspotifyId}
+          spotifyId={this.props.spotifyId}
+          updatePlaylistLink={this.updatePlaylistLink}
         />
       </Modal>
     )
@@ -90,14 +122,15 @@ class Playlist extends Component {
         <JoinPlaylist
           userId={this.props.userId}
           displayName={this.props.displayName}
-          spotifyId={this.props.displspotifyId}
+          spotifyId={this.props.spotifyId}
+          addPlaylistToState={this.addPlaylistToState}
         />
       </Modal>
     )
   }
 
   renderPlaylists = () => {
-    console.log(this.state)
+
     return this.state.playlists.map((playlist, index) => {
       return (
         <PlaylistCard>

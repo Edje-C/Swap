@@ -16,7 +16,9 @@ class JoinPlaylist extends Component {
 
   joinSwap = async () => {
     try {
-      await saveTracks(this.state.key, this.props.userId);
+      const playlist = await saveTracks(this.state.key, this.props.userId);
+
+      this.props.addPlaylistToState(playlist);
 
       this.setState({
         songsAdded: true
@@ -37,6 +39,7 @@ class JoinPlaylist extends Component {
               key: event.target.value
             })
           }}
+          type='password'
         />
         <JoinButton
           onClick={this.joinSwap}

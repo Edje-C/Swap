@@ -1,15 +1,22 @@
 const express = require('express');
+const _ = require('lodash');
 const router = express.Router();
 const { tokenRequired, loginRequired } = require('../lib/helpers');
 const {
+  getPlaylistByPlaylistId,
   getFullPlaylistByUserId,
   getFullPlaylistByPlaylistId,
   createPlaylist,
-  verifyPlaylistPassword,
-  updatePassword
+  updatePassword,
+  savePlaylistLink
 } = require('../functions/playlists');
 const {
-  getAccessToken
+  getTracksByPlaylistId
+} = require('../functions/tracks');
+const {
+  getAccessToken,
+  createPlaylistForUser,
+  addSongsToPlaylist
 } = require('../lib/spotify');
 
 router.get('/', tokenRequired, loginRequired, async (req, res) => {
@@ -60,20 +67,55 @@ router.post('/', tokenRequired, loginRequired, async (req, res) => {
   const {userId, title, songCount, password} = req.body;
 
   if(!(userId && title && songCount && password)) {
-    return res.son(status(422).j`Error: Request missing data.`);
+    return res.status(422).json(`Error: Request missing data.`);
   }
 
   try {
     const accessToken = await getAccessToken(req, res);
-
     const newPlaylist = await createPlaylist(userId, title, songCount, password, accessToken);
-    
     const fullPlaylist = await getFullPlaylistByPlaylistId(newPlaylist._id)
 
     res.json(fullPlaylist);
   }
   catch(err) {
     res.status(500).json(err)
+  }
+});
+
+router.post('/save', tokenRequired, loginRequired, async (req, res) => {
+  const {spotifyId, playlistId} = req.body;
+
+  if(!(spotifyId && playlistId)) {
+    return res.status(422).json(`Error: Request missing data.`);
+  }
+
+  try {
+    const accessToken = await getAccessToken(req, res);
+    const playlist = await getPlaylistByPlaylistId(playlistId);
+    if(!playlist) {
+      throw `Error: Couldn't find playlist`;
+    }
+
+    const tracks = await getTracksByPlaylistId(playlist._id);
+
+    if(!(tracks && tracks.length)) {
+      throw `Error: Couldn't retrieve tracks`;
+    }
+
+    const spotifyPlaylistResponse = await createPlaylistForUser(spotifyId, playlist.title, accessToken);
+    const spotifyPlaylist = spotifyPlaylistResponse.data;
+    const shuffledTracks = _.shuffle(tracks);
+
+
+    await addSongsToPlaylist(spotifyPlaylist.id, shuffledTracks, accessToken);
+    await savePlaylistLink(playlist._id, spotifyPlaylist.external_urls.spotify);
+
+    const fullPlaylist = await getFullPlaylistByPlaylistId(playlist._id);
+
+    res.json(fullPlaylist);
+  }
+  catch(err) {
+    res.status(500).json(err);
   }
 });
 

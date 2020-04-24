@@ -2,9 +2,9 @@ import React, { Component } from "react";
 import styled from 'styled-components';
 import moment from "moment";
 
-import { colors, fontSizes, fontWeights, boxShadows } from "../globalStyles";
+import { colors, fontSizes, fontWeights } from "../globalStyles";
 import { copyToClipboard } from "../functions";
-import { updatePassword } from "../api";
+import { updatePassword, savePlaylist } from "../api";
 import Button from "./button";
 
 
@@ -13,7 +13,8 @@ class PlaylistDetails extends Component {
     super(props);
 
     this.state = {
-      passwordText: ''
+      passwordText: '',
+      savingPlaylist: false
     };
   }
 
@@ -40,15 +41,34 @@ class PlaylistDetails extends Component {
     else if (!this.state.passwordText) {
       const password = await updatePassword(this.props.playlist._id);
 
-      this.setState({passwordText: password});
+      this.setState({passwordText: `${this.props.playlist._id}:${password}`});
+    }
+  }
+
+  savePlaylist = async () => {
+    try {
+      this.setState({
+        savingPlaylist: true
+      });
+
+      const playlist = await savePlaylist(this.props.spotifyId, this.props.playlist._id);
+
+      this.props.updatePlaylistLink(playlist.link);
+
+      this.setState({
+        savingPlaylist: false
+      });
+    }
+    catch(err) {
+      console.log(err)
     }
   }
   
   renderCollaborators = (collaborators) => {
     return collaborators.map(collaborator => {
-      return (
+      return collaborator._id !== this.props.playlist.creator._id ? (
         <Collaborator>{collaborator.displayName}</Collaborator>
-      )
+      ) : null
     })
   }
 
@@ -68,30 +88,34 @@ class PlaylistDetails extends Component {
           {this.props.playlist.link ? 
             <TextGroup>
               <DetailLabel>link : </DetailLabel>
-              <DetailLink>{this.props.playlist.link}</DetailLink>
+              <DetailLink href={this.props.playlist.link} target="_blank">{this.props.playlist.link}</DetailLink>
             </TextGroup> : null}
           <TextGroup>
             <DetailLabel>password expiry : </DetailLabel>
             <DetailSpan urgent={this.props.passwordHasExpired}>{moment(this.props.playlist.passwordExpiration).format('LLL')}</DetailSpan>
           </TextGroup>
-          <TextGroup>
-            <DetailLabel>password : </DetailLabel>
-            <PasswordButton
-              onClick={this.onPasswordButtonClick}
-            >
-              {this.state.passwordText ? this.state.passwordText : 'generate new password'}
-            </PasswordButton>
-          </TextGroup>
+          {this.props.userId === this.props.playlist.creator._id ?
+              <TextGroup>
+              <DetailLabel>password : </DetailLabel>
+              <PasswordButton
+                onClick={this.onPasswordButtonClick}
+              >
+                {this.state.passwordText ? this.state.passwordText : 'generate new password'}
+              </PasswordButton>
+            </TextGroup> : null}
           <TextGroup>
             <DetailLabel>collaborators : </DetailLabel>
-            <CollaboratorsContainer>
-              {this.props.playlist.collaborators.length ?
-                this.renderCollaborators(this.props.playlist.collaborators) :
-                <DetailSpan>0</DetailSpan>
-              }
-            </CollaboratorsContainer>
+            {this.props.playlist.collaborators.length > 1 ? 
+              <CollaboratorsContainer>
+                {this.renderCollaborators(this.props.playlist.collaborators)}
+              </CollaboratorsContainer> :
+              <DetailSpan>0</DetailSpan>}
           </TextGroup>
-          {this.props.playlist.link ? null : <SaveButton>Save Playlist</SaveButton>}
+          {
+            this.props.playlist.link || 
+            this.props.userId !== this.props.playlist.creator._id ? 
+              null : <SaveButton onClick={this.savePlaylist} disabled={this.state.savingPlaylist}>Save Playlist</SaveButton>
+          }
         </Details>
       </>
     );
@@ -146,10 +170,15 @@ const DetailLink = styled.a`
 `;
 
 const PasswordButton = styled.button`
-  width: 19ch;
   background: none;
   color: ${colors.gray};
   font-size: ${fontSizes.xsmall};
+  flex: 1;
+  text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 `;
 
 const CollaboratorsContainer = styled.div`

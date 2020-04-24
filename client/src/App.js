@@ -20,7 +20,7 @@ class App extends Component {
 
     this.state = {
       userId: '',
-      userSpotifyId: '',
+      spotifyId: '',
       displayName: 'alittleify'
     };
   }
@@ -43,27 +43,26 @@ class App extends Component {
       user &&
         this.setState({
           userId: user.userId,
-          userSpotifyId: user.spotifyId,
+          spotifyId: user.spotifyId,
           displayName: user.displayName
         })
     }
     catch(err) {
-      console.log('Error', err)
+      console.log(err)
     }
   }
 
   renderHomePage = () => {
     return (
       this.state.userId && 
-      this.state.userSpotifyId && 
+      this.state.spotifyId && 
       this.state.displayName ?
-        // <Landing /> :
         <Playlist 
           userId={this.state.userId}
-          userSpotifyId={this.state.userSpotifyId}
+          spotifyId={this.state.spotifyId}
           displayName={this.state.displayName}
-        /> 
-        : <Landing /> 
+        /> :
+        <Landing /> 
       )
   }
 

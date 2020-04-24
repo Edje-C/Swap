@@ -26,9 +26,6 @@ const playlistSchema = new Schema(
       min: 1,
       max: 50
     },
-    spotifyPlaylistId: {
-      type: String
-    },
     link: {
       type: String
     },

@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { saveTracks } = require('../functions/tracks');
-const { getPlaylistByPlaylistId } = require('../functions/playlists');
+const { getPlaylistByPlaylistId, getFullPlaylistByPlaylistId, verifyPlaylistPassword } = require('../functions/playlists');
 const { getAccessToken, getPlaylistTracks } = require('../lib/spotify');
 const { tokenRequired, loginRequired, getPlaylistIdAndPassword } = require('../lib/helpers');
 
@@ -20,8 +20,8 @@ router.post('/', tokenRequired, loginRequired, async (req, res) => {
       return res.status(422).json(`Error: Broken key.`)
     }
     
-    const playlistId = playlistIdDetails[0];
-    const password = playlistIdDetails[1];
+    const playlistId = playlistDetails[0];
+    const password = playlistDetails[1];
     
     const playlist = await getPlaylistByPlaylistId(playlistId);
 
@@ -36,16 +36,20 @@ router.post('/', tokenRequired, loginRequired, async (req, res) => {
     }
 
     const uris = await getPlaylistTracks(playlist.songCount, accessToken);
-    
+
     if(uris && uris.length) {
       await saveTracks(playlistId, userId, uris);
-      res.json(true);
+
+      const updatedPlaylist = await getFullPlaylistByPlaylistId(playlistId)
+
+      res.json(updatedPlaylist);
     }
     else {
       throw `Error: Couldn't collect tracks.`;
     }
   }
   catch(err) {
+
     res.status(500).json(err);
   }
 });

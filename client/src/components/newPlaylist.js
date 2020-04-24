@@ -15,7 +15,7 @@ class NewPlaylist extends Component {
       title: '',
       songCount: 0,
       errorMessage: '',
-      passwordText: ''
+      keyText: ''
     };
   }
 
@@ -55,10 +55,12 @@ class NewPlaylist extends Component {
         length: 16
       });
 
-      await createPlaylist(this.props.userId, this.state.title, this.state.songCount, password);
+      const playlist = await createPlaylist(this.props.userId, this.state.title, this.state.songCount, password);
+
+      this.props.addPlaylistToState(playlist);
 
       this.setState({
-        passwordText: password
+        keyText: `${playlist._id}:${password}`
       })
     }
   }
@@ -103,27 +105,27 @@ class NewPlaylist extends Component {
     return (
       <>
         <Title>Success!</Title>
-        <Message>Here's your playlist password, collaborators will need it to join this swap.</Message>
+        <Message>Here's your playlist key, collaborators will need it to join this Swap.</Message>
         <ExpireMessage>It will expire in 24 hours!</ExpireMessage>
         <PasswordButton
           onClick={() => {
-            const password = this.state.passwordText;
+            const password = this.state.keyText;
 
             copyToClipboard(password);
 
             this.setState(
-              { passwordText: 'copied!' },
+              { keyText: 'copied!' },
               () => {
                 setTimeout(() => {
                   this.setState({
-                    passwordText: password
+                    keyText: password
                   })
                 }, 1000);
               }
             );
           }}
         >
-          {this.state.passwordText}
+          {this.state.keyText}
         </PasswordButton>
       </>
     )
@@ -132,7 +134,7 @@ class NewPlaylist extends Component {
   render() {
     return (
       <>
-        {this.state.passwordText ?
+        {this.state.keyText ?
           this.renderPassword():
           this.renderCreate()}
       </>
@@ -225,6 +227,9 @@ const PasswordButton = styled.button`
   font-size: ${fontSizes.small};
   margin-top: 30px;
   padding: 5px 0px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 export default NewPlaylist;

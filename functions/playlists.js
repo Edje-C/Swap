@@ -43,12 +43,13 @@ const getFullPlaylistByUserId = async (userId) => {
         $group: {
           _id: '$playlistId',
           collaborators: {
-            $addToSet: '$collaborator'
+            $push: '$collaborator'
           },
           creator: {$first: '$creator'},
           creatorId: {$first: '$playlist.creatorId'},
           title: {$first: '$playlist.title'},
           songCount: {$first: '$playlist.songCount'},
+          link: {$first: '$playlist.link'},
           password: {$first: '$playlist.password'},
           passwordExpiration: {$first: '$playlist.passwordExpiration'},
           createdAt: {$first: '$playlist.createdAt'},
@@ -64,6 +65,11 @@ const getFullPlaylistByUserId = async (userId) => {
             }
           }
         }
+      },
+      {
+        $sort: {
+          createdAt: -1
+        }
       }
     ]);
   }
@@ -74,7 +80,7 @@ const getFullPlaylistByUserId = async (userId) => {
 
 const getFullPlaylistByPlaylistId = async (playlistId) => {
   try{
-    return await Playlist.aggregate([
+    const playlist = await Playlist.aggregate([
       {
         $match: {
           _id: playlistId
@@ -117,23 +123,30 @@ const getFullPlaylistByPlaylistId = async (playlistId) => {
         $group: {
           _id: '$_id',
           collaborators: {
-            $addToSet: '$collaborator'
+            $push: '$collaborator'
           },
           creator: {$first: '$creator'},
           creatorId: {$first: '$creatorId'},
           title: {$first: '$title'},
           songCount: {$first: '$songCount'},
+          link: {$first: '$link'},
           password: {$first: '$password'},
           passwordExpiration: {$first: '$passwordExpiration'},
           createdAt: {$first: '$createdAt'},
           updatedAt: {$first: '$updatedAt'},
           updatedAt: {$first: '$updatedAt'},
         }
+      },
+      {
+        $sort: {
+          createdAt: -1
+        }
       }
     ]);
+
+    return playlist[0];
   }
   catch(err) {
-    console.log(err)
     throw err
   }
 };
@@ -189,7 +202,6 @@ const createPlaylist = async (creatorId, title, songCount, password, accessToken
 
     return playlist;
   } catch (err) {
-    console.log('err')
     await session.abortTransaction();
     session.endSession();
 
@@ -242,11 +254,37 @@ const updatePassword = async (playlistId, password) => {
   }
 }
 
+const savePlaylistLink = async (playlistId, link) => {
+  try {
+    const playlist = await Playlist.findById(playlistId);
+
+    if(playlist) {
+      await Playlist.updateOne(
+        {_id: playlistId},
+        {
+          $set: {
+            link
+          }
+        }
+      );
+  
+      return playlist
+    }
+    else {
+      throw 'Error: Playlist not found.'
+    }
+  }
+  catch(err) {
+    throw err
+  }
+}
+
 module.exports = {
   getFullPlaylistByUserId,
   getFullPlaylistByPlaylistId,
   getPlaylistByPlaylistId,
   createPlaylist,
   verifyPlaylistPassword,
-  updatePassword
+  updatePassword,
+  savePlaylistLink
 }

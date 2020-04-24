@@ -19,7 +19,36 @@ const saveTracks = async (playlistId, userId, uris) => {
   }
 };
 
+const getTracksByPlaylistId = async (playlistId) => {
+  try{
+    const tracks = await Tracks.aggregate([
+      {
+        $match: {
+          playlistId
+        }
+      },
+      {
+        $unwind: '$uris'
+      },
+      {
+        $group: {
+          _id: '$playlistId',
+          uris: {
+            $push: '$uris'
+          }
+        }
+      }
+    ]);
+
+    return tracks.length ? tracks[0].uris : null;
+  }
+  catch(err) {
+    throw err
+  }
+};
+
 
 module.exports = {
-  saveTracks
+  saveTracks,
+  getTracksByPlaylistId
 }

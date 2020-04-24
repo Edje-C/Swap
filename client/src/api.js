@@ -165,3 +165,26 @@ export const saveTracks = async (key, userId) => {
     throw err
   }
 }
+
+export const savePlaylist = async (spotifyId, playlistId) => {
+  try {
+    const {apiToken} = parseCookies();
+    
+    const playlist = await axios({
+      method: 'post',
+      url: '/api/playlists/save',
+      headers: {
+        'Authorization': `Bearer ${apiToken}`
+      },
+      data: {
+        spotifyId,
+        playlistId
+      }
+    })
+
+    return playlist.data
+  }
+  catch(err) {
+    throw err
+  }
+}
