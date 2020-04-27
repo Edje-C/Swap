@@ -10,7 +10,8 @@ class JoinPlaylist extends Component {
 
     this.state = {
       key: '',
-      songsAdded: false
+      songsAdded: false,
+      error: false
     }
   }
 
@@ -25,6 +26,7 @@ class JoinPlaylist extends Component {
       })
     }
     catch(err) {
+      this.setState({error: true})
       console.log(err)
     }
   }
@@ -39,10 +41,19 @@ class JoinPlaylist extends Component {
               key: event.target.value
             })
           }}
+          onKeyDown={(event) => {
+            if(
+              this.state.key &&
+              event.keyCode === 13
+            ){
+              this.joinSwap();
+            }
+          }}
           type='password'
         />
         <JoinButton
           onClick={this.joinSwap}
+          disabled={!this.state.key}
         >
           Join
         </JoinButton>
@@ -60,12 +71,23 @@ class JoinPlaylist extends Component {
     );
   }
 
+  renderError = () => {
+    return (
+      <>
+        <Heading>Oh no!</Heading>
+        <Message>Somethine went wrong. Please refresh and try again.</Message>
+      </>
+    );
+  }
+
   render() {
     return (
       <>
-        {this.state.songsAdded ?
-          this.renderSuccess() :
-          this.renderJoin()}
+        {this.state.error ?
+          this.renderError() :
+            this.state.songsAdded ?
+              this.renderSuccess() :
+              this.renderJoin()}
       </>
     );
   }
@@ -85,7 +107,7 @@ const Input = styled.input`
   font-weight: ${fontWeights.semiLight};
   font-family: inherit;
   margin-top: 10px;
-  padding: 10px 15px;
+  padding: 10px 50px;
   border-radius: 10px;
   text-align: center;
   letter-spacing: 3px;
@@ -99,6 +121,10 @@ const JoinButton = styled(Button)`
   background: ${colors.purple};
   color: ${colors.white};
   margin: 50px auto 0px;
+
+  &:disabled {
+    background: ${colors.opaqueBlue};
+  }
 `;
 
 const Message = styled.p`

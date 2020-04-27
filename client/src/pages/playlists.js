@@ -3,7 +3,8 @@ import styled from 'styled-components';
 import moment from "moment";
 import { colors, fontSizes, fontWeights, boxShadows } from "../globalStyles";
 import { getPlaylists } from "../api";
-import { samplePlaylist } from "../sampleData";
+import { ellipsisInCenter } from "../functions";
+import { samplePlaylist1, samplePlaylist2 } from "../sampleData";
 import Modal from "../components/modal";
 import NewPlaylist from "../components/newPlaylist";
 import PlaylistDetails from "../components/playlistDetails";
@@ -18,7 +19,7 @@ class Playlist extends Component {
       renderPlaylistDetailsModal: false,
       renderNewPlaylistModal: false,
       renderJoinPlaylistModal: false,
-      playlists: [samplePlaylist, samplePlaylist, samplePlaylist, samplePlaylist, samplePlaylist],
+      playlists: [samplePlaylist1, samplePlaylist2, samplePlaylist1, samplePlaylist2, samplePlaylist2],
       selectedPlaylist: -1,
       newPassword: ''
     };
@@ -130,7 +131,6 @@ class Playlist extends Component {
   }
 
   renderPlaylists = () => {
-
     return this.state.playlists.map((playlist, index) => {
       return (
         <PlaylistCard>
@@ -139,6 +139,7 @@ class Playlist extends Component {
           <PlaylistDetail>
             {moment(playlist.createdAt).format('LL')}
           </PlaylistDetail>
+          <PlaylistLink>{(playlist.link && ellipsisInCenter(playlist.link, 12)) || `Pending`}</PlaylistLink>
           <ShareButton 
             onClick={() => {
               this.setState({
@@ -147,7 +148,7 @@ class Playlist extends Component {
               })
             }}
           >
-            Share
+            Details
           </ShareButton>
         </PlaylistCard>
       )
@@ -277,12 +278,17 @@ const PlaylistDetail = styled.div`
   width: 90%;
   color: ${colors.opaqueWhite3};
   font-size: ${fontSizes.xsmall};
-  display: flex;
-  justify-content: space-between;
   margin-bottom: 5px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+`
+
+const PlaylistLink = styled.a`
+  width: 90%;
+  color: ${colors.opaqueBlue};
+  font-size: ${fontSizes.xsmall};
+  margin-bottom: 5px;
 `
 
 const ShareButton = styled(Button)`

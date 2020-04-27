@@ -19,9 +19,9 @@ class App extends Component {
     super(props);
 
     this.state = {
-      userId: '',
-      spotifyId: '',
-      displayName: 'alittleify'
+      userId: '5598f70b-beea-4a31-9778-e83ececfd1a8',
+      spotifyId: 'alittleify',
+      displayName: ''
     };
   }
 

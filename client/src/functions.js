@@ -41,3 +41,10 @@ export const parseCookies = () => {
 
   return cookies
 }
+
+export const ellipsisInCenter = (text, balance) => {
+  if (text.length > ((balance * 2) + 5)) {
+    return text.substring(0, balance) + '...' + text.substring(text.length - balance, text.length);
+  }
+  return text;
+}

@@ -29,6 +29,10 @@ router.post('/', tokenRequired, loginRequired, async (req, res) => {
       throw `Error: Couldn't find playlist.`;
     }
 
+    if(playlist.link) {
+      throw `Error: Playlist has already been saved.`
+    }
+
     const passwordIsCorrect = await verifyPlaylistPassword(playlistId, password);
 
     if(!passwordIsCorrect) {

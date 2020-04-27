@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import styled from 'styled-components';
 import passwordGenerator from 'generate-password';
 import { colors, fontSizes, fontWeights, boxShadows } from "../globalStyles";
-import { copyToClipboard } from "../functions";
+import { copyToClipboard, ellipsisInCenter } from "../functions";
 import { createPlaylist } from "../api";
 import Button from "./button";
 
@@ -15,7 +15,8 @@ class NewPlaylist extends Component {
       title: '',
       songCount: 0,
       errorMessage: '',
-      keyText: ''
+      keyText: '',
+      error: false
     };
   }
 
@@ -55,13 +56,19 @@ class NewPlaylist extends Component {
         length: 16
       });
 
-      const playlist = await createPlaylist(this.props.userId, this.state.title, this.state.songCount, password);
-
-      this.props.addPlaylistToState(playlist);
-
-      this.setState({
-        keyText: `${playlist._id}:${password}`
-      })
+      try {
+        const playlist = await createPlaylist(this.props.userId, this.state.title, this.state.songCount, password);
+  
+        this.props.addPlaylistToState(playlist);
+  
+        this.setState({
+          keyText: `${playlist._id}:${password}`
+        })
+      }
+      catch(err) {
+        this.setState({error: true});
+        console.log(err)
+      }
     }
   }
 
@@ -105,7 +112,8 @@ class NewPlaylist extends Component {
     return (
       <>
         <Title>Success!</Title>
-        <Message>Here's your playlist key, collaborators will need it to join this Swap.</Message>
+        <Message>Here's your playlist key.</Message>
+        <Message>Collaborators will need it to join this Swap.</Message>
         <ExpireMessage>It will expire in 24 hours!</ExpireMessage>
         <PasswordButton
           onClick={() => {
@@ -125,8 +133,17 @@ class NewPlaylist extends Component {
             );
           }}
         >
-          {this.state.keyText}
+          {ellipsisInCenter(this.state.keyText, 15)}
         </PasswordButton>
+      </>
+    )
+  }
+
+  renderError = () => {
+    return (
+      <>
+        <Title>Oh no!</Title>
+        <Message>Something went wrong. Please refresh and try again.</Message>
       </>
     )
   }
@@ -134,9 +151,11 @@ class NewPlaylist extends Component {
   render() {
     return (
       <>
-        {this.state.keyText ?
-          this.renderPassword():
-          this.renderCreate()}
+        {this.state.error ?
+          this.renderError() :
+            this.state.keyText ?
+              this.renderPassword():
+              this.renderCreate()}
       </>
     );
   }
@@ -146,7 +165,7 @@ const Title = styled.p`
   color: ${colors.darkGray};
   font-size: ${fontSizes.large};
   font-weight: ${fontWeights.regular};
-  margin-bottom: 20px;
+  margin-bottom: 15px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -212,12 +231,12 @@ const SubmitButton = styled(Button)`
 `;
 
 const Message = styled.p`
-  max-width: 350px;
-  margin: 0px auto 10px;
+  color: ${colors.gray};
 `;
 
 const ExpireMessage = styled(Message)`
   color: ${colors.purple};
+  margin-top: 15px;
 `;
 
 const PasswordButton = styled.button`
@@ -227,9 +246,6 @@ const PasswordButton = styled.button`
   font-size: ${fontSizes.small};
   margin-top: 30px;
   padding: 5px 0px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 `;
 
 export default NewPlaylist;

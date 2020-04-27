@@ -263,7 +263,8 @@ const savePlaylistLink = async (playlistId, link) => {
         {_id: playlistId},
         {
           $set: {
-            link
+            link,
+            $passwordExpiration: new Date()
           }
         }
       );

@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import moment from "moment";
 
 import { colors, fontSizes, fontWeights } from "../globalStyles";
-import { copyToClipboard } from "../functions";
+import { copyToClipboard, ellipsisInCenter } from "../functions";
 import { updatePassword, savePlaylist } from "../api";
 import Button from "./button";
 
@@ -14,15 +14,29 @@ class PlaylistDetails extends Component {
 
     this.state = {
       passwordText: '',
-      savingPlaylist: false
+      savingPlaylist: false,
+      error: false
     };
   }
 
   onPasswordButtonClick = async () => {
-    if(
-      this.state.passwordText &&
-      this.state.passwordText !== 'copied!'
+    if (
+      this.state.passwordText === 'copied!' ||
+      this.state.error
     ) {
+      return
+    }
+    else if (!this.state.passwordText) {
+      try {
+        const password = await updatePassword(this.props.playlist._id);
+  
+        this.setState({passwordText: `${this.props.playlist._id}:${password}`});
+      }
+      catch(err) {
+        this.setState({passwordText: 'Something went wrong...'})
+      }
+    }
+    else {
       const password = this.state.passwordText;
 
       copyToClipboard(this.state.passwordText);
@@ -37,11 +51,6 @@ class PlaylistDetails extends Component {
           }, 1000);
         }
       );
-    }
-    else if (!this.state.passwordText) {
-      const password = await updatePassword(this.props.playlist._id);
-
-      this.setState({passwordText: `${this.props.playlist._id}:${password}`});
     }
   }
 
@@ -60,6 +69,9 @@ class PlaylistDetails extends Component {
       });
     }
     catch(err) {
+      this.setState({
+        error: true
+      })
       console.log(err)
     }
   }
@@ -88,19 +100,20 @@ class PlaylistDetails extends Component {
           {this.props.playlist.link ? 
             <TextGroup>
               <DetailLabel>link : </DetailLabel>
-              <DetailLink href={this.props.playlist.link} target="_blank">{this.props.playlist.link}</DetailLink>
+              <DetailLink href={this.props.playlist.link} target="_blank">{ellipsisInCenter(this.props.playlist.link, 20)}</DetailLink>
             </TextGroup> : null}
-          <TextGroup>
+          {this.props.playlist.link ? null : <TextGroup>
             <DetailLabel>password expiry : </DetailLabel>
             <DetailSpan urgent={this.props.passwordHasExpired}>{moment(this.props.playlist.passwordExpiration).format('LLL')}</DetailSpan>
-          </TextGroup>
-          {this.props.userId === this.props.playlist.creator._id ?
+          </TextGroup>}
+          {this.props.userId === this.props.playlist.creator._id &&
+            !this.props.playlist.link ?
               <TextGroup>
               <DetailLabel>password : </DetailLabel>
               <PasswordButton
                 onClick={this.onPasswordButtonClick}
               >
-                {this.state.passwordText ? this.state.passwordText : 'generate new password'}
+                {this.state.passwordText ? ellipsisInCenter(this.state.passwordText, 12) : 'generate new password'}
               </PasswordButton>
             </TextGroup> : null}
           <TextGroup>
@@ -114,7 +127,9 @@ class PlaylistDetails extends Component {
           {
             this.props.playlist.link || 
             this.props.userId !== this.props.playlist.creator._id ? 
-              null : <SaveButton onClick={this.savePlaylist} disabled={this.state.savingPlaylist}>Save Playlist</SaveButton>
+              null : this.state.error ?
+                <ErrorMessage>Something went wrong. Please refresh and try again.</ErrorMessage> :
+                <SaveButton onClick={this.savePlaylist} disabled={this.state.savingPlaylist}>Save Playlist</SaveButton>
           }
         </Details>
       </>
@@ -158,9 +173,6 @@ const DetailSpan = styled.span`
 
 const DetailLink = styled.a`
   color: ${colors.opaqueBlue};
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
   flex: 1;
   text-align: left;
 
@@ -175,9 +187,6 @@ const PasswordButton = styled.button`
   font-size: ${fontSizes.xsmall};
   flex: 1;
   text-align: left;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 `;
 
@@ -204,6 +213,12 @@ const SaveButton = styled(Button)`
   background: ${colors.opaqueBlue};
   color: ${colors.white};
   margin: 20px 0px 0px auto;
+`;
+
+const ErrorMessage = styled.p`
+  color: ${colors.opaqueBlue};
+  margin-top: 20px;
+  padding: 7px 0px;
 `;
 
 export default PlaylistDetails;
