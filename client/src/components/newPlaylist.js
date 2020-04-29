@@ -57,7 +57,7 @@ class NewPlaylist extends Component {
       });
 
       try {
-        const playlist = await createPlaylist(this.props.userId, this.state.title, this.state.songCount, password);
+        const playlist = await createPlaylist(this.props.apiToken, this.props.userId, this.state.title, this.state.songCount, password);
   
         this.props.addPlaylistToState(playlist);
   

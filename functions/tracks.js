@@ -4,7 +4,10 @@ const saveTracks = async (playlistId, userId, uris) => {
   try{
     let tracks = await Tracks.findOne({playlistId, userId});
 
-    if(!tracks) {
+    if(tracks) {
+      throw `Error: User already joined playlist.`
+    }
+    else {
       tracks = await Tracks.create({
         playlistId,
         userId,

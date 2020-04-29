@@ -27,7 +27,7 @@ class Playlist extends Component {
 
   componentDidMount = async () => {
     try {
-      const playlists = await getPlaylists(this.props.userId);
+      const playlists = await getPlaylists(this.props.apiToken, this.props.userId);
 
       this.setState({
         playlists
@@ -78,6 +78,7 @@ class Playlist extends Component {
         }}
       >
         <NewPlaylist
+          apiToken={this.props.apiToken}
           userId={this.props.userId}
           displayName={this.props.displayName}
           spotifyId={this.props.spotifyId}
@@ -102,6 +103,7 @@ class Playlist extends Component {
         <PlaylistDetails
           playlist={playlist}
           passwordHasExpired={passwordHasExpired}
+          apiToken={this.props.apiToken}
           userId={this.props.userId}
           displayName={this.props.displayName}
           spotifyId={this.props.spotifyId}
@@ -121,6 +123,7 @@ class Playlist extends Component {
         }}
       >
         <JoinPlaylist
+          apiToken={this.props.apiToken}
           userId={this.props.userId}
           displayName={this.props.displayName}
           spotifyId={this.props.spotifyId}

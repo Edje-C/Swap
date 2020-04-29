@@ -43,8 +43,5 @@ export const boxShadows = {
 }
 
 export const images = {
-  logo: require('./assets/logo.png'),
-  spotifyIconWhite: require('./assets/spotify-icon-white.png'),
-  spotifyIconBlack: require('./assets/spotify-icon-black.png'),
-  spotifyIconGreen: require('./assets/spotify-icon-green.png')
+  logo: require('./assets/logo.png')
 }

@@ -3,7 +3,7 @@ import { Route, Switch } from 'react-router-dom'
 import styled from 'styled-components';
 
 import { saveApiToken, getUser } from './api';
-import { generateApiToken, parseCookies } from './functions';
+import { generateApiToken } from './functions';
 import { colors } from './globalStyles';
 
 import Landing from './pages/landing';
@@ -19,26 +19,27 @@ class App extends Component {
     super(props);
 
     this.state = {
-      userId: '5598f70b-beea-4a31-9778-e83ececfd1a8',
-      spotifyId: 'alittleify',
+      apiToken: '',
+      userId: '',
+      spotifyId: '',
       displayName: ''
     };
   }
 
   componentDidMount = async () => {
-    if(!parseCookies().apiToken) {
-      try {
-        const apiToken = generateApiToken();
-        await saveApiToken(apiToken)
-        document.cookie = `apiToken=${apiToken}`;
-      }
-      catch(err) {
-        console.log(err)
-      }
+    try {
+      const apiToken = generateApiToken();
+      await saveApiToken(apiToken);
+      this.setState({
+        apiToken
+      })
+    }
+    catch(err) {
+      console.log(err)
     }
 
     try {
-      const user = await getUser();
+      const user = await getUser(this.state.apiToken);
 
       user &&
         this.setState({
@@ -54,10 +55,12 @@ class App extends Component {
 
   renderHomePage = () => {
     return (
+      this.state.apiToken && 
       this.state.userId && 
       this.state.spotifyId && 
       this.state.displayName ?
         <Playlist 
+          apiToken={this.state.apiToken}
           userId={this.state.userId}
           spotifyId={this.state.spotifyId}
           displayName={this.state.displayName}
@@ -74,7 +77,7 @@ class App extends Component {
           <Route exact path="/">
             {this.renderHomePage()}
           </Route>
-          <Route path="/how">
+          <Route path="/how-it-works">
             <How />
           </Route>
           <Route path="/*">

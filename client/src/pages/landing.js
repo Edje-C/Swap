@@ -9,7 +9,7 @@ class Landing extends Component {
         <Aurora/>
         <Content>
           <Heading>Swap</Heading>
-          <SubHeading>A Playlist Generator</SubHeading>
+          <SubHeading>A Spotify Playlist Generator</SubHeading>
           <Message>Generate a playlist for you and your friends with songs from each of your Spotify accounts so that everyone can enjoy the music.</Message>
           <EnterLink href="/api/spotify/auth"><EnterButton>Enter</EnterButton></EnterLink>
         </Content>

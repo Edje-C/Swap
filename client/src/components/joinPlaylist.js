@@ -17,7 +17,7 @@ class JoinPlaylist extends Component {
 
   joinSwap = async () => {
     try {
-      const playlist = await saveTracks(this.state.key, this.props.userId);
+      const playlist = await saveTracks(this.props.apiToken, this.state.key, this.props.userId);
 
       this.props.addPlaylistToState(playlist);
 

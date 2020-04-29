@@ -28,7 +28,7 @@ class PlaylistDetails extends Component {
     }
     else if (!this.state.passwordText) {
       try {
-        const password = await updatePassword(this.props.playlist._id);
+        const password = await updatePassword(this.props.apiToken, this.props.playlist._id);
   
         this.setState({passwordText: `${this.props.playlist._id}:${password}`});
       }
@@ -60,7 +60,7 @@ class PlaylistDetails extends Component {
         savingPlaylist: true
       });
 
-      const playlist = await savePlaylist(this.props.spotifyId, this.props.playlist._id);
+      const playlist = await savePlaylist(this.props.apiToken, this.props.spotifyId, this.props.playlist._id);
 
       this.props.updatePlaylistLink(playlist.link);
 
@@ -79,7 +79,10 @@ class PlaylistDetails extends Component {
   renderCollaborators = (collaborators) => {
     return collaborators.map(collaborator => {
       return collaborator._id !== this.props.playlist.creator._id ? (
-        <Collaborator>{collaborator.displayName}</Collaborator>
+        <Collaborator>
+          {this.props.userId === collaborator._id ?
+            `You` : collaborator.displayName}
+        </Collaborator>
       ) : null
     })
   }

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { parseCookies, generatePassword } from './functions';
+import { generatePassword } from './functions';
 
 export const saveApiToken = async (apiToken) => {
   await axios({
@@ -11,10 +11,8 @@ export const saveApiToken = async (apiToken) => {
   })
 }
 
-export const getUser = async () => {
-  try {
-    const {apiToken} = parseCookies();
-    
+export const getUser = async (apiToken) => {
+  try {    
     const user =  await axios({
       method: 'get',
       url: '/api/users/',
@@ -30,10 +28,8 @@ export const getUser = async () => {
   }
 }
 
-export const getPlaylists = async (userId) => {
-  try {
-    const {apiToken} = parseCookies();
-    
+export const getPlaylists = async (apiToken, userId) => {
+  try {    
     const playlists =  await axios({
       method: 'get',
       url: '/api/playlists',
@@ -52,10 +48,8 @@ export const getPlaylists = async (userId) => {
   }
 }
 
-export const getPlaylist = async (id) => {
-  try {
-    const {apiToken} = parseCookies();
-    
+export const getPlaylist = async (apiToken, id) => {
+  try {    
     const playlists =  await axios({
       method: 'get',
       url: `/api/playlists/${id}`,
@@ -71,10 +65,8 @@ export const getPlaylist = async (id) => {
   }
 }
 
-export const updatePassword = async (playlistId) => {
-  try {
-    const {apiToken} = parseCookies();
-    const password = generatePassword();
+export const updatePassword = async (apiToken, playlistId) => {
+  try {    const password = generatePassword();
     
     await axios({
       method: 'post',
@@ -95,10 +87,8 @@ export const updatePassword = async (playlistId) => {
   }
 }
 
-export const verifyPassword = async (playlistId, password) => {
-  try {
-    const {apiToken} = parseCookies();
-    
+export const verifyPassword = async (apiToken, playlistId, password) => {
+  try {    
     const passwordIsCorrect = await axios({
       method: 'post',
       url: '/api/playlists/verify-password',
@@ -118,10 +108,8 @@ export const verifyPassword = async (playlistId, password) => {
   }
 }
 
-export const createPlaylist = async (userId, title, songCount, password) => {
-  try {
-    const {apiToken} = parseCookies();
-    
+export const createPlaylist = async (apiToken, userId, title, songCount, password) => {
+  try {    
     const playlist = await axios({
       method: 'post',
       url: '/api/playlists',
@@ -143,10 +131,8 @@ export const createPlaylist = async (userId, title, songCount, password) => {
   }
 }
 
-export const saveTracks = async (key, userId) => {
-  try {
-    const {apiToken} = parseCookies();
-    
+export const saveTracks = async (apiToken, key, userId) => {
+  try {    
     const playlist = await axios({
       method: 'post',
       url: '/api/tracks',
@@ -166,10 +152,8 @@ export const saveTracks = async (key, userId) => {
   }
 }
 
-export const savePlaylist = async (spotifyId, playlistId) => {
-  try {
-    const {apiToken} = parseCookies();
-    
+export const savePlaylist = async (apiToken, spotifyId, playlistId) => {
+  try {    
     const playlist = await axios({
       method: 'post',
       url: '/api/playlists/save',

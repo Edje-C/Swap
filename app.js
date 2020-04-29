@@ -1,7 +1,6 @@
 const createError = require('http-errors');
 const express = require('express');
 const path = require('path');
-const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const session = require('express-session');
 const cors = require('cors');
@@ -22,7 +21,6 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(cors());
 app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
 app.use(session({
   secret: "\x02\xf3\xf7r\t\x9f\xee\xbbu\xb1\xe1\x90\xfe'\xab\xa6L6\xdd\x8d[\xccO\xfe",
   resave: false,
@@ -40,7 +38,7 @@ app.use('/api/tracks', trackRouter);
 app.post('/api', (req, res) => {
   const { apiToken } = req.body;
 
-  res.cookie('apiToken', apiToken);
+  req.user['apiToken'] = apiToken;
 
   res.status(200).json('success');
 })

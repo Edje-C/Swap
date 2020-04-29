@@ -24,9 +24,6 @@ router.get(
   '/callback',
   passport.authenticate('spotify', { failureRedirect: '/' }),
   (req, res) => {
-    const user = req.session.passport.user;
-    res.cookie('accessToken', user.accessToken, { expires: new Date(Date.now() + (user.expiresIn * 1000)) });
-    res.cookie('refreshToken', user.refreshToken);
     res.redirect('/');
   }
 );

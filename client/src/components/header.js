@@ -8,7 +8,7 @@ const Header = () => {
     <Container>
       <LogoLink to='/'><Logo src={images.logo}/></LogoLink>
       <Links>
-        <Link>how it works</Link>
+        <Link to='/how-it-works'>how it works</Link>
       </Links>
     </Container>
   );
@@ -38,7 +38,7 @@ const Links = styled.div`
   display: flex;
 `;
 
-const Link = styled.a`
+const Link = styled(ReactLink)`
   font-size: ${fontSizes.small};
   color: ${colors.white};
   cursor: pointer;

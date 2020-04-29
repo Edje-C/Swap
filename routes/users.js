@@ -7,16 +7,11 @@ router.get('/', tokenRequired, loginRequired, async (req, res) => {
   try {
     const { userId, spotifyId, displayName } = req.user;
 
-    if(userId, spotifyId, displayName) {
-      res.json({
-        userId,
-        spotifyId,
-        displayName
-      });
-    }
-    else {
-      res.status(500).json(`Error: no user found`)
-    }
+    res.json({
+      userId,
+      spotifyId,
+      displayName
+    });
   }
   catch(err) {
     res.status(500).json(err)
