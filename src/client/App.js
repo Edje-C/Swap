@@ -70,6 +70,8 @@ class App extends Component {
   }
 
   render() {
+    const img = require('./static/logo.png')
+    console.log(img)
     return (
       <Container>
         <Header/>

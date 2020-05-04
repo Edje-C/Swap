@@ -7,6 +7,9 @@ const {
   spliceRandomIndex,
   getRandomIndices
 } = require('./helpers');
+const {
+  getTracksByPlaylistId
+} = require('../functions/tracks');
 
 const SPOTIFY_API = 'https://api.spotify.com/v1';
 
@@ -134,31 +137,37 @@ const getRecommendedTracks = async (tracks, accessToken) => {
   } 
 }
 
-const getPlaylistTracks = async (target, accessToken) => {
+const getPlaylistTracks = async (playlistId, target, accessToken) => {
   try {
     // how many songs we want per category
     const topTarget = Math.floor(target * .4);
     const savedTarget = Math.floor(target * .4);
+    const trackUriObject = {};
+    
+    if(playlistId) {
+      const uris = await getTracksByPlaylistId(playlistId);
+      uris.forEach(uri => {
+        trackUriObject[uri] = true;
+      })
+    }
 
     const topLongTermResponse = await getTopTracks('long_term', accessToken);
     const topShortTermResponse = await getTopTracks('short_term', accessToken);
     const topLongTermTracks = topLongTermResponse.data;
     const topShortTermTracks = topShortTermResponse.data;
+    const allTopTracks = [...topLongTermTracks.items, ...topShortTermTracks.items];
+    const uniqueTopTracks = [];
     
-    const uniqueTopTracks = _.uniqBy([...topLongTermTracks.items, ...topShortTermTracks.items], 'id');
-
-    // saving the ids of songs we've seen to avoid duplicates
-    const trackIdObject = uniqueTopTracks.reduce((tracks, track) => {
-        tracks[track] = true;
-        return tracks;
-      }, {});
+    allTopTracks.forEach((track) => {
+      addUniqueTrack(track, uniqueTopTracks, trackUriObject)
+    })
 
     const savedTracksResponse = await getSavedTracks(0, accessToken);
     const savedTracks = savedTracksResponse.data;
     const uniqueSavedTracks = [];
 
-    savedTracks.items.forEach(({track}) => {
-      addUniqueTrack(track, uniqueSavedTracks, trackIdObject)
+    savedTracks.items.forEach((track) => {
+      addUniqueTrack(track, uniqueSavedTracks, trackUriObject)
     })
 
     if(savedTracks.total > 50) {
@@ -175,8 +184,8 @@ const getPlaylistTracks = async (target, accessToken) => {
         const offsetSavedTracksResponse = await getSavedTracks(offestIndex * 50, accessToken);
         const offsetSavedTracks = offsetSavedTracksResponse.data;
 
-        offsetSavedTracks.items.forEach(({track}) => {
-          addUniqueTrack(track, uniqueSavedTracks, trackIdObject);
+        offsetSavedTracks.items.forEach((track) => {
+          addUniqueTrack(track, uniqueSavedTracks, trackUriObject);
         })
       }
     }
@@ -201,7 +210,7 @@ const getPlaylistTracks = async (target, accessToken) => {
     const uniqueRecommendedTracks = [];
 
     recommendedTracks.tracks.forEach(track => {
-      addUniqueTrack(track, uniqueRecommendedTracks, trackIdObject);
+      addUniqueTrack(track, uniqueRecommendedTracks, trackUriObject);
     })
 
     // get random songs from each category

@@ -75,7 +75,7 @@ class JoinPlaylist extends Component {
     return (
       <>
         <Heading>Oh no!</Heading>
-        <Message>Somethine went wrong. Please refresh and try again.</Message>
+        <Message>Something went wrong. Please refresh and try again.</Message>
       </>
     );
   }

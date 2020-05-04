@@ -48,9 +48,9 @@ const getIdsFromTracks = (tracks) => {
 }
 
 const addUniqueTrack = (track, array, object) => {
-  if(!object[track.id]) {
+  if(!object[track.uri]) {
     array.push(track);
-    object[track.id] = true;
+    object[track.uri] = true;
   }
 }
 

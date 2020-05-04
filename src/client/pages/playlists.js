@@ -142,7 +142,9 @@ class Playlist extends Component {
           <PlaylistDetail>
             {moment(playlist.createdAt).format('LL')}
           </PlaylistDetail>
-          <PlaylistLink>{(playlist.link && ellipsisInCenter(playlist.link, 12)) || `Pending`}</PlaylistLink>
+          {playlist.link ? 
+            <PlaylistLink>{ellipsisInCenter(playlist.link, 12)}</PlaylistLink> :
+            <PendingDetail>Pending</PendingDetail>}
           <ShareButton 
             onClick={() => {
               this.setState({
@@ -288,7 +290,17 @@ const PlaylistDetail = styled.div`
 `
 
 const PlaylistLink = styled.a`
-  width: 90%;
+  width: fit-content;
+  color: ${colors.opaqueBlue};
+  font-size: ${fontSizes.xsmall};
+  margin-bottom: 5px;
+
+  &:hover {
+    border-bototm: 1px solid;
+  }
+`
+
+const PendingDetail = styled.p`
   color: ${colors.opaqueBlue};
   font-size: ${fontSizes.xsmall};
   margin-bottom: 5px;

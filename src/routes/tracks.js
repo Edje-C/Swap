@@ -39,7 +39,7 @@ router.post('/', tokenRequired, loginRequired, async (req, res) => {
       throw `Error: Incorrect Password`;
     }
 
-    const uris = await getPlaylistTracks(playlist.songCount, accessToken);
+    const uris = await getPlaylistTracks(playlist._id, playlist.songCount, accessToken);
 
     if(uris && uris.length) {
       await saveTracks(playlistId, userId, uris);

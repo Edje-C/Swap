@@ -43,5 +43,5 @@ export const boxShadows = {
 }
 
 export const images = {
-  logo: require('./assets/logo.png')
+  logo: require('./static/logo.png')
 }

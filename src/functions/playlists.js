@@ -165,7 +165,7 @@ const createPlaylist = async (creatorId, title, songCount, password, accessToken
   let uris;
 
   try {
-    uris = await getPlaylistTracks(songCount, accessToken);
+    uris = await getPlaylistTracks(undefined, songCount, accessToken);
   }
   catch(err) {
     throw err
