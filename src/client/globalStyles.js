@@ -5,7 +5,8 @@ export const fontSizes = {
   medium: '25px',
   large: '30px',
   xlarge: '50px',
-  xxlarge: '100px'
+  xxlarge: '75px',
+  xxxlarge: '100px'
 }
 
 export const fontWeights = {
@@ -33,8 +34,7 @@ export const colors = {
   lightBlue: '#20BDFF',
   cyan: '#0FE3FF',
   purple: '#5433FF',
-  lightPurple: '#DDDDEE',
-  spotifyGreen: '#20D760'
+  lightPurple: '#DDDDEE'
 }
 
 export const boxShadows = {

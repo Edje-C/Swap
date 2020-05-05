@@ -1,5 +1,4 @@
 const passport = require('passport');
-const uuid = require('uuid');
 const SpotifyStrategy = require('passport-spotify').Strategy;
 const User = require('../models/user.model');
 require('dotenv').config();
@@ -26,8 +25,7 @@ passport.use(
       const tokens = { 
         accessToken,
         refreshToken,
-        expiresIn,
-        apiToken: uuid.v4()
+        expiresIn
       };
 
       User.findOne({ spotifyId: profile.id })

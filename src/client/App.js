@@ -9,6 +9,7 @@ import { colors } from './globalStyles';
 import Landing from './pages/landing';
 import Playlist from './pages/playlists';
 import Error from './pages/error';
+import Lost from './pages/lost';
 import Header from './components/header';
 import Footer from './components/footer';
 import How from './pages/how';
@@ -19,10 +20,7 @@ class App extends Component {
     super(props);
 
     this.state = {
-      apiToken: '',
-      userId: '',
-      spotifyId: '',
-      displayName: ''
+      apiToken: ''
     };
   }
 
@@ -37,41 +35,25 @@ class App extends Component {
     catch(err) {
       console.log(err)
     }
-
-    try {
-      const user = await getUser(this.state.apiToken);
-
-      user &&
-        this.setState({
-          userId: user.userId,
-          spotifyId: user.spotifyId,
-          displayName: user.displayName
-        })
-    }
-    catch(err) {
-      console.log(err)
-    }
   }
 
   renderHomePage = () => {
     return (
       this.state.apiToken && 
-      this.state.userId && 
-      this.state.spotifyId && 
-      this.state.displayName ?
+      this.props.userId && 
+      this.props.spotifyId && 
+      this.props.displayName ?
         <Playlist 
           apiToken={this.state.apiToken}
-          userId={this.state.userId}
-          spotifyId={this.state.spotifyId}
-          displayName={this.state.displayName}
+          userId={this.props.userId}
+          spotifyId={this.props.spotifyId}
+          displayName={this.props.displayName}
         /> :
         <Landing /> 
       )
   }
 
   render() {
-    const img = require('./static/logo.png')
-    console.log(img)
     return (
       <Container>
         <Header/>
@@ -82,8 +64,11 @@ class App extends Component {
           <Route path="/how-it-works">
             <How />
           </Route>
-          <Route path="/*">
+          <Route path="/404">
             <Error />
+          </Route>
+          <Route path="/*">
+            <Lost />
           </Route>
         </Switch>
         <Footer/>

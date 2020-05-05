@@ -20,7 +20,7 @@ class Landing extends Component {
 
 const Container = styled.div`
   width: 100%;
-  height: calc(100% - 75px);
+  min-height: calc(100% - 75px);
   display: flex;
   margin-top: -115px;
 
@@ -30,7 +30,7 @@ const Container = styled.div`
 
 const Aurora = styled.div`
   width: 100%;
-  height: calc(100% - 75px);
+  height: 100% - 75px;
   position: fixed;
 
   animation: 8s linear infinite aurora;
@@ -63,14 +63,14 @@ const Content = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  margin: 115px 100px;
+  margin: 115px 100px 75px;
   position: relative;
 `;
 
 const Heading = styled.p`
   color: ${colors.purple};
   font-family: 'Montserrat Alternates', sans-serif;
-  font-size: ${fontSizes.xxlarge}; 
+  font-size: ${fontSizes.xxxlarge}; 
   font-weight: ${fontWeights.bold};
 `;
 
@@ -87,7 +87,9 @@ const Message = styled.p`
   margin-bottom: 50px
 `;
 
-const EnterLink = styled.a``;
+const EnterLink = styled.a`
+  width: fit-content;
+`;
 
 const EnterButton = styled.button`
   width: 200px;

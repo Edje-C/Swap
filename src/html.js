@@ -1,15 +1,15 @@
-import React from 'react';
-
-const Html = ({ children, scripts }) => (
+export default (body, styles, initialState) => (`
+  <!DOCTYPE html>
   <html>
     <head>
+      <script>window.__APP_INITIAL_STATE__ = ${JSON.stringify(initialState)}</script>
+      <title>Swap</title>
       <meta charSet="UTF-8" />
       <meta name="viewport" content="width=device-width, initial-scale=1"/>
-      <link rel="shortcut icon" href="static/logo.png" type="image/x-icon"></link>
-      <link rel="stylesheet" href={`https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;500;700&family=Montserrat+Alternates:wght@700&display=swap`}/>
-      <title>Swap</title>
+      <link rel="shortcut icon" href="static/logo.png" type="image/x-icon"/>
+      <link rel="stylesheet" href=https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;500;700&family=Montserrat+Alternates:wght@700&display=swap/>
       <style>
-        {`html, body {
+        html, body {
           width: 100%;
           height: 100%;
           color: #EFFFFF;
@@ -38,18 +38,16 @@ const Html = ({ children, scripts }) => (
 
         #root {
           height: 100%;
-        }`}
+        }
       </style>
+      ${styles}
     </head>
+    
     <body>
-      <div
-        id="root"
-        dangerouslySetInnerHTML={{ __html: children }}
-      />
-
-      {scripts.map((item, index) => <script key={index} src={item} />)}
+      <div id="root">${body}</div>
     </body>
+    
+    <script src='vendor.js'></script>
+    <script src='client.js'></script>
   </html>
-);
-
-export default Html;
+`)

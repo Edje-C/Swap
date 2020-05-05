@@ -4,7 +4,6 @@ import moment from "moment";
 import { colors, fontSizes, fontWeights, boxShadows } from "../globalStyles";
 import { getPlaylists } from "../api";
 import { ellipsisInCenter } from "../functions";
-import { samplePlaylist1, samplePlaylist2 } from "../sampleData";
 import Modal from "../components/modal";
 import NewPlaylist from "../components/newPlaylist";
 import PlaylistDetails from "../components/playlistDetails";
@@ -19,7 +18,7 @@ class Playlist extends Component {
       renderPlaylistDetailsModal: false,
       renderNewPlaylistModal: false,
       renderJoinPlaylistModal: false,
-      playlists: [samplePlaylist1, samplePlaylist2, samplePlaylist1, samplePlaylist2, samplePlaylist2],
+      playlists: [],
       selectedPlaylist: -1,
       newPassword: ''
     };
@@ -134,30 +133,34 @@ class Playlist extends Component {
   }
 
   renderPlaylists = () => {
-    return this.state.playlists.map((playlist, index) => {
-      return (
-        <PlaylistCard>
-          <PlaylistTitle href={playlist.link}>{playlist.title}</PlaylistTitle>
-          <PlaylistDetail>{playlist.creator.displayName}</PlaylistDetail>
-          <PlaylistDetail>
-            {moment(playlist.createdAt).format('LL')}
-          </PlaylistDetail>
-          {playlist.link ? 
-            <PlaylistLink>{ellipsisInCenter(playlist.link, 12)}</PlaylistLink> :
-            <PendingDetail>Pending</PendingDetail>}
-          <ShareButton 
-            onClick={() => {
-              this.setState({
-                renderPlaylistDetailsModal: true,
-                selectedPlaylist: index
-              })
-            }}
-          >
-            Details
-          </ShareButton>
-        </PlaylistCard>
-      )
-    })
+    return (
+      <Playlists>
+        {this.state.playlists.map((playlist, index) => {
+          return (
+            <PlaylistCard>
+              <PlaylistTitle href={playlist.link}>{playlist.title}</PlaylistTitle>
+              <PlaylistDetail>{playlist.creator.displayName}</PlaylistDetail>
+              <PlaylistDetail>
+                {moment(playlist.createdAt).format('LL')}
+              </PlaylistDetail>
+              {playlist.link ? 
+                <PlaylistLink>{ellipsisInCenter(playlist.link, 12)}</PlaylistLink> :
+                <PendingDetail>Pending</PendingDetail>}
+              <ShareButton 
+                onClick={() => {
+                  this.setState({
+                    renderPlaylistDetailsModal: true,
+                    selectedPlaylist: index
+                  })
+                }}
+              >
+                Details
+              </ShareButton>
+            </PlaylistCard>
+          )
+        })}
+      </Playlists>
+    )
   }
 
   render() {
@@ -189,9 +192,10 @@ class Playlist extends Component {
             </NewPlaylistButton>
           </HeaderButtons>
         </Header>
-        <Playlists>
-          {this.renderPlaylists()}
-        </Playlists>
+        {this.state.playlists &&
+          this.state.playlists.length ? 
+          this.renderPlaylists() :
+          <BlankStateMessage>Get started by joining or creating a Swap.</BlankStateMessage>}
       </Container>
     )
   }
@@ -218,6 +222,9 @@ const Heading = styled.p`
   color: ${colors.white};
   font-family: 'Montserrat Alternates', sans-serif;
   font-size: ${fontSizes.xlarge};
+  margin-right: 20px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
 const HeaderButtons = styled.div`
@@ -228,6 +235,7 @@ const JoinPlaylistButton = styled(Button)`
   background: none;
   border: 2px solid ${colors.white};
   color: ${colors.white};
+  margin-right: 50px;
 
   &:hover {
     background: ${colors.purple};
@@ -240,7 +248,6 @@ const NewPlaylistButton = styled(Button)`
   background: none;
   border: 2px solid ${colors.white};
   color: ${colors.white};
-  margin-left: 20px;
   
   &:hover {
     background: ${colors.lightBlue};
@@ -295,9 +302,19 @@ const PlaylistLink = styled.a`
   font-size: ${fontSizes.xsmall};
   margin-bottom: 5px;
 
-  &:hover {
-    border-bototm: 1px solid;
+  &::after {
+    width: 100%;
+    height: 1px;
+    background: none;
+    display: block;
+    content: ''
   }
+
+  &:hover {
+    &::after {
+      background: ${colors.opaqueBlue};
+    }
+  }  
 `
 
 const PendingDetail = styled.p`
@@ -316,6 +333,11 @@ const ShareButton = styled(Button)`
     color: ${colors.purple};
     background: ${colors.white};
   }
+`;
+
+const BlankStateMessage = styled.p`
+  color: ${colors.opaqueWhite3};
+  font-size: ${fontSizes.large};
 `;
 
 export default Playlist;

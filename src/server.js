@@ -19,8 +19,8 @@ import playlistRouter from './routes/playlists';
 import trackRouter from './routes/tracks';
 import spotifyRouter from './routes/spotify';
 
+import html from './html';
 import App from './client/App'
-import Html from './client/html'
 
 const app = express();
 const uri = process.env.ATLAS_URI;
@@ -39,61 +39,73 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-
 app.use('/api/spotify', spotifyRouter);
 app.use('/api/users', userRouter);
 app.use('/api/playlists', playlistRouter);
 app.use('/api/tracks', trackRouter);
 
 app.post('/api', (req, res) => {
-  const { apiToken } = req.body;
-  req.user['apiToken'] = apiToken;
-
-  res.status(200).json('success');
-})
+  try {
+    const { apiToken } = req.body;
+    req.user['apiToken'] = apiToken;
+  
+    res.status(200).json('success');
+  }
+  catch(err) {
+    res.status(500).json(err)
+  }
+});
 
 app.use('/', express.static(path.join(__dirname)));
 app.get('/*', (req, res) => {
   try {
     const sheet = new ServerStyleSheet()
-    const scripts = ['vendor.js', 'client.js'];
     const appMarkup = ReactDOMServer.renderToString(sheet.collectStyles(
       <StaticRouter location={req.url} context={{}}>
         <App />
       </StaticRouter>
     ));
-    const styleTags = sheet.getStyleTags()
-    // sheet.seal()
-    const html = ReactDOMServer.renderToStaticMarkup(
-      <Html
-        children={appMarkup}
-        scripts={scripts}
-      />
-    );
+    const styleTags = sheet.getStyleTags();
+    const initialState = req.user ? {
+      userId: req.user.userId,
+      spotifyId: req.user.spotifyId,
+      displayName: req.user.displayName
+    } : {}
 
-    res.send(html);
+    sheet.seal();
+
+    res.send(html(
+      appMarkup,
+      styleTags,
+      initialState
+    ))
   }
   catch(err) {
-    console.log('err', err)
+    console.log(err)
   }
 });
-
-mongoose.connect(uri, {useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true});
-connection.on('error', console.error.bind(console, 'connection error:'));
-connection.once('open', () => {
-  console.log('MongoDB connection success');
-})
 
 app.use((req, res, next) => {
   next(createError(404));
 });
 
-app.use((err, req, res, next) => {
+app.use((err, req, res) => {
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
   res.status(err.status || 500);
   res.send(err);
 });
+
+mongoose.connect(uri, {
+  useNewUrlParser: true,
+  useCreateIndex: true,
+  useUnifiedTopology: true,
+  serverSelectionTimeoutMS: 5000
+});
+connection.on('error', console.error.bind(console, 'connection error:'));
+connection.once('open', () => {
+  console.log('MongoDB connection success');
+})
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => console.log(`Listening on port: ${port}`));

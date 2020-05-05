@@ -22,6 +22,14 @@ router.get(
 
 router.get(
   '/callback',
+  (req, res, next) => {
+    if(req.headers['sec-fetch-site'] === 'none') {
+      res.redirect('/404');
+    }
+    else {
+      next();
+    }
+  },
   passport.authenticate('spotify', { failureRedirect: '/' }),
   (req, res) => {
     res.redirect('/');

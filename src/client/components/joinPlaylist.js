@@ -16,6 +16,10 @@ class JoinPlaylist extends Component {
   }
 
   joinSwap = async () => {
+    if(this.state.key.length !== 53) {
+      return this.setState({error: true});
+    }
+
     try {
       const playlist = await saveTracks(this.props.apiToken, this.state.key, this.props.userId);
 
