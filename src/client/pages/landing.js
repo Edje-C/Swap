@@ -20,7 +20,7 @@ class Landing extends Component {
 
 const Container = styled.div`
   width: 100%;
-  min-height: calc(100% - 75px);
+  height: calc(100% - 75px);
   display: flex;
   margin-top: -115px;
 
