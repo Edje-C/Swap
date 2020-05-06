@@ -103,7 +103,7 @@ class PlaylistDetails extends Component {
           {this.props.playlist.link ? 
             <TextGroup>
               <DetailLabel>link : </DetailLabel>
-              <DetailLink href={this.props.playlist.link} target="_blank">{ellipsisInCenter(this.props.playlist.link, 20)}</DetailLink>
+              <DetailLink href={this.props.playlist.link} target="_blank">{ellipsisInCenter(this.props.playlist.link.replace('https://', ''), 16)}</DetailLink>
             </TextGroup> : null}
           {this.props.playlist.link ? null : <TextGroup>
             <DetailLabel>password expiry : </DetailLabel>
@@ -157,6 +157,7 @@ const Details = styled.div`
 
 const TextGroup = styled.div`
   display: flex;
+  flex-wrap: wrap;
   margin-bottom: 15px;
 `;
 
@@ -178,6 +179,9 @@ const DetailLink = styled.a`
   color: ${colors.opaqueBlue};
   flex: 1;
   text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 
   &:hover {
     color: ${colors.blue};
@@ -190,6 +194,9 @@ const PasswordButton = styled.button`
   font-size: ${fontSizes.xsmall};
   flex: 1;
   text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 `;
 

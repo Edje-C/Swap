@@ -77,6 +77,7 @@ const CloseButton = styled.button`
   background: ${colors.opaqueBlack};
   color: ${colors.white};
   display: none;
+  justify-content: center;
   border-radius: 100px;
   position: absolute;
   top: 20px;

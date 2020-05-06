@@ -253,6 +253,9 @@ const PasswordButton = styled.button`
   font-size: ${fontSizes.small};
   margin-top: 30px;
   padding: 5px 0px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 export default NewPlaylist;
