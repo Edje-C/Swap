@@ -16,7 +16,8 @@ class NewPlaylist extends Component {
       songCount: 0,
       errorMessage: '',
       keyText: '',
-      error: false
+      error: false,
+      creatingPlaylist: false
     };
   }
 
@@ -50,19 +51,21 @@ class NewPlaylist extends Component {
       })
     }
     else {
-      const password = passwordGenerator.generate({
-        numbers: true,
-        strict: true,
-        length: 16
-      });
-
       try {
+        this.setState({creatingPlaylist: true});
+
+        const password = passwordGenerator.generate({
+          numbers: true,
+          strict: true,
+          length: 16
+        });
         const playlist = await createPlaylist(this.props.apiToken, this.props.userId, this.state.title, this.state.songCount, password);
   
         this.props.addPlaylistToState(playlist);
   
         this.setState({
-          keyText: `${playlist._id}:${password}`
+          keyText: `${playlist._id}:${password}`,
+          creatingPlaylist: false
         })
       }
       catch(err) {
@@ -102,7 +105,7 @@ class NewPlaylist extends Component {
         </TextGroup>
         <SubmitContainer>
           <ErrorMessage>{this.state.errorMessage}</ErrorMessage>
-          <SubmitButton onClick={this.onSubmit}>Done</SubmitButton>
+          <SubmitButton onClick={this.onSubmit} disabled={this.state.creatingPlaylist}>Done</SubmitButton>
         </SubmitContainer>
       </>
     )
@@ -227,6 +230,10 @@ const SubmitButton = styled(Button)`
 
   &:hover {
     box-shadow: ${boxShadows.blue2};
+  }
+
+  &:disabled {
+    opacity: .7;
   }
 `;
 

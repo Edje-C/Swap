@@ -56,17 +56,17 @@ const addUniqueTrack = (track, array, object) => {
 
 const spliceRandomIndex = (array) => {
   const index = array.splice(Math.floor(Math.random() * array.length), 1);
-  return index[0]
+  return index[0];
 }
 
 const getRandomIndices = (amount, array) => {
   const values = [];
   const newArray = [...array];
-  for(let i = 0; i < amount; i++) {
+  while(values.length < amount && newArray.length > 0) {
     const randomValue = spliceRandomIndex(newArray);
-    randomValue && values.push(randomValue)
+    randomValue && values.push(randomValue);
   }
-  return values
+  return values;
 }
 
 const getPlaylistIdAndPassword = (key) => {

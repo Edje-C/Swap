@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { fontSizes, fontWeights, colors } from '../globalStyles';
+import { fontSizes, fontWeights, colors, breakpoints } from '../globalStyles';
 
 function How() {
   return (
@@ -10,7 +10,7 @@ function How() {
         <Message>Swap pulls music from your spotify account to create a playlist.</Message>
       </Section>
       <Section>
-        <Message>When you create a Swap, you assign a title and a <OpaqueItalic>songCount</OpaqueItalic>. The <OpaqueItalic>songCount</OpaqueItalic> is will let Swap know how many songs to pull from each collaborator for the playlist.</Message>
+        <Message>When you create a Swap, you assign a title and a <OpaqueItalic>songCount</OpaqueItalic>. The <OpaqueItalic>songCount</OpaqueItalic> will let Swap know how many songs to pull from each collaborator for the playlist.</Message>
         <IndentedMessage><Opaque>40% </Opaque> of the songs will be from your saved songs.</IndentedMessage>
         <IndentedMessage><Opaque>40% </Opaque> of the songs will be from your top songs.</IndentedMessage>
         <IndentedMessage><Opaque>20% </Opaque> of the songs will be recommendations.</IndentedMessage>
@@ -29,6 +29,14 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   padding: 50px 100px;
+
+  @media (max-width: ${breakpoints.xlarge}) {
+    text-align: center;
+  }
+
+  @media (max-width: ${breakpoints.large}) {
+    padding: 50px;
+  }
 `;
 
 const Heading = styled.p`
@@ -44,14 +52,22 @@ const Heading = styled.p`
     background: ${colors.white};
     display: block;
   }
+
+  @media (max-width: ${breakpoints.xlarge}) {
+    margin: 0px auto 50px;
+  }
 `;
 
 const Section = styled.div`
-  width: 100%;
+  width: calc(100% - 30px);
   max-width: 1000px;
   margin: 0px 0px 20px 30px;
   display: flex;
   flex-direction: column;
+
+  @media (max-width: ${breakpoints.xlarge}) {
+    margin: 0px auto 20px;
+  }
 `;
 
 const Message = styled.p`
@@ -63,6 +79,12 @@ const Message = styled.p`
 const IndentedMessage = styled(Message)`
   width: calc(100% - 50px);
   margin-left: 50px;
+
+
+  @media (max-width: ${breakpoints.xlarge}) {
+    width: inherit;
+    margin: inherit;
+  }
 `;
 
 const Opaque = styled.span`

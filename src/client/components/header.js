@@ -47,7 +47,6 @@ const Link = styled(ReactLink)`
     content: '';
     width: 50px;
     height: 2px;
-    background: ${colors.white};
     display: flex;
     margin: 5px auto 0px;
     transition: all .3s ease;
@@ -55,12 +54,8 @@ const Link = styled(ReactLink)`
 
   &:hover {
     &::after {
-      content: '';
       width: 100%;
-      height: 2px;
       background: ${colors.white};
-      display: flex;
-      margin: 5px auto 0px;
     }
   }
 `;

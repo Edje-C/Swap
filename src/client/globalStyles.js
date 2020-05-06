@@ -45,3 +45,11 @@ export const boxShadows = {
 export const images = {
   logo: require('./static/logo.png')
 }
+
+export const breakpoints = {
+  xsmall: '400px',
+  small: '500px',
+  medium: '700px',
+  large: '900px',
+  xlarge: '1000px'
+}

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
-import { colors, fontSizes, fontWeights } from "../globalStyles";
+import { colors, fontSizes, fontWeights, breakpoints } from "../globalStyles";
 
 class Landing extends Component {
   render() {
@@ -20,18 +20,24 @@ class Landing extends Component {
 
 const Container = styled.div`
   width: 100%;
-  height: calc(100% - 75px);
+  min-height: calc(100% - 75px);
   display: flex;
+  align-items: center;
   margin-top: -115px;
-
+  padding-top: 115px;
   background: linear-gradient(to bottom left, ${colors.purple}, ${colors.lightPurple});
   
+  @media (max-width: ${breakpoints.medium}) {
+    justify-content: center;
+    text-align: center;
+  }
 `;
 
 const Aurora = styled.div`
   width: 100%;
-  height: 100% - 75px;
+  height: 100%;
   position: fixed;
+  top: 0;
 
   animation: 8s linear infinite aurora;
 
@@ -58,13 +64,17 @@ const Aurora = styled.div`
 `;
 
 const Content = styled.div`
-  width: 650px;
+  max-width: 650px;
   height: calc(100% - 190px);
   display: flex;
   flex-direction: column;
   justify-content: center;
-  margin: 115px 100px 75px;
+  margin: 100px;
   position: relative;
+
+  @media (max-width: ${breakpoints.medium}) {
+    margin: 50px;
+  }
 `;
 
 const Heading = styled.p`
@@ -89,6 +99,10 @@ const Message = styled.p`
 
 const EnterLink = styled.a`
   width: fit-content;
+
+  @media (max-width: ${breakpoints.medium}) {
+    margin: 0px auto;
+  }
 `;
 
 const EnterButton = styled.button`
@@ -99,7 +113,7 @@ const EnterButton = styled.button`
   border: 2px solid ${colors.purple};
   border-radius: 50px;
   text-align: center;
-  transition: all .2s ease;
+  transition: all .3s ease;
 
   &:hover {
     color: ${colors.purple};

@@ -166,7 +166,7 @@ const getPlaylistTracks = async (playlistId, target, accessToken) => {
     const savedTracks = savedTracksResponse.data;
     const uniqueSavedTracks = [];
 
-    savedTracks.items.forEach((track) => {
+    savedTracks.items.forEach(({track}) => {
       addUniqueTrack(track, uniqueSavedTracks, trackUriObject)
     })
 
@@ -180,13 +180,18 @@ const getPlaylistTracks = async (playlistId, target, accessToken) => {
         (uniqueSavedTracks.length < savedTarget * 5) &&
         offsets.length
       ) {
-        const offestIndex = spliceRandomIndex(offsets);
-        const offsetSavedTracksResponse = await getSavedTracks(offestIndex * 50, accessToken);
-        const offsetSavedTracks = offsetSavedTracksResponse.data;
-
-        offsetSavedTracks.items.forEach((track) => {
-          addUniqueTrack(track, uniqueSavedTracks, trackUriObject);
-        })
+        try {
+          const offestIndex = spliceRandomIndex(offsets);
+          const offsetSavedTracksResponse = await getSavedTracks(offestIndex * 50, accessToken);
+          const offsetSavedTracks = offsetSavedTracksResponse.data;
+  
+          offsetSavedTracks.items.forEach(({track}) => {
+            addUniqueTrack(track, uniqueSavedTracks, trackUriObject);
+          })
+        }
+        catch(err) {
+          console.log(err)
+        }
       }
     }
 
@@ -224,7 +229,13 @@ const getPlaylistTracks = async (playlistId, target, accessToken) => {
       uniqueRecommendedTracks);
     const playlistTracks = [...randomTopTracks, ...randomSavedTracks, ...randomRecommendedTracks];
 
-    return playlistTracks.map(track => track.uri)
+    const trackUris = [];
+
+    playlistTracks.forEach(track => {
+      track.uri && trackUris.push(track.uri)
+    })
+
+    return trackUris
   }
   catch(err) {
     throw err;

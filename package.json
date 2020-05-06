@@ -3,7 +3,10 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start:dev": "npm run clear && webpack && node ./build/server.js",
+    "start": "npm run clear && webpack && node ./build/server.js",
+    "dev": "npm run clear && npm-run-all --parallel watch-build watch-sever",
+    "watch-sever": "nodemon ./build/server.js",
+    "watch-build": "webpack --watch",
     "clear": "rimraf ./build"
   },
   "dependencies": {
@@ -47,7 +50,7 @@
     "webpack-cli": "^3.3.11",
     "webpack-node-externals": "^1.7.2"
   },
-  "main": "app.js",
+  "main": "build/server.js",
   "author": "",
   "license": "ISC",
   "description": ""

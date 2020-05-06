@@ -8,6 +8,7 @@ export default (body, styles, initialState) => (`
       <meta name="viewport" content="width=device-width, initial-scale=1"/>
       <link rel="shortcut icon" href="static/logo.png" type="image/x-icon"/>
       <link rel="stylesheet" href=https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;500;700&family=Montserrat+Alternates:wght@700&display=swap/>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
       <style>
         html, body {
           width: 100%;

@@ -31,7 +31,8 @@ router.get('/', tokenRequired, loginRequired, async (req, res) => {
     res.json(playlists);
   }
   catch(err) {
-    res.status(500).json(err)
+    console.log(err)
+    res.status(500).json(err);
   }
 });
 
@@ -42,7 +43,8 @@ router.get('/:id', tokenRequired, loginRequired, async (req, res) => {
     res.json(playlist);
   }
   catch(err) {
-    res.status(500).json(err)
+    console.log(err)
+    res.status(500).json(err);
   }
 });
 
@@ -59,7 +61,8 @@ router.post('/update-password', tokenRequired, loginRequired, async (req, res) =
     res.json(updatedPassword)
   }
   catch(err) {
-    res.status(500).json(err)
+    console.log(err)
+    res.status(500).json(err);
   }
 })
 
@@ -78,7 +81,8 @@ router.post('/', tokenRequired, loginRequired, async (req, res) => {
     res.json(fullPlaylist);
   }
   catch(err) {
-    res.status(500).json(err)
+    console.log(err)
+    res.status(500).json(err);
   }
 });
 
@@ -115,7 +119,8 @@ router.post('/save', tokenRequired, loginRequired, async (req, res) => {
     res.json(fullPlaylist);
   }
   catch(err) {
-    res.status(500).json(err);
+    console.log(err)
+    res.status(500).json(err);;
   }
 });
 

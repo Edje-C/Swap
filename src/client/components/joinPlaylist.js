@@ -11,7 +11,8 @@ class JoinPlaylist extends Component {
     this.state = {
       key: '',
       songsAdded: false,
-      error: false
+      error: false,
+      addingTracks: false
     }
   }
 
@@ -21,12 +22,14 @@ class JoinPlaylist extends Component {
     }
 
     try {
+      this.setState({addingTracks: true})
       const playlist = await saveTracks(this.props.apiToken, this.state.key, this.props.userId);
 
       this.props.addPlaylistToState(playlist);
 
       this.setState({
-        songsAdded: true
+        songsAdded: true,
+        addingTracks: false
       })
     }
     catch(err) {
@@ -57,7 +60,7 @@ class JoinPlaylist extends Component {
         />
         <JoinButton
           onClick={this.joinSwap}
-          disabled={!this.state.key}
+          disabled={!this.state.key || this.state.addingTracks}
         >
           Join
         </JoinButton>

@@ -14,7 +14,8 @@ router.get('/', tokenRequired, loginRequired, async (req, res) => {
     });
   }
   catch(err) {
-    res.status(500).json(err)
+    console.log(err)
+    res.status(500).json(err);
   }
 });
 
@@ -24,7 +25,8 @@ router.get('/:id', tokenRequired, loginRequired, async (req, res) => {
     res.json(user);
   }
   catch(err) {
-    res.status(500).json(err)
+    console.log(err)
+    res.status(500).json(err);
   }
 });
 

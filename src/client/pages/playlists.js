@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import styled from 'styled-components';
 import moment from "moment";
-import { colors, fontSizes, fontWeights, boxShadows } from "../globalStyles";
+import { colors, fontSizes, fontWeights, boxShadows, breakpoints } from "../globalStyles";
 import { getPlaylists } from "../api";
 import { ellipsisInCenter } from "../functions";
 import Modal from "../components/modal";
@@ -144,7 +144,7 @@ class Playlist extends Component {
                 {moment(playlist.createdAt).format('LL')}
               </PlaylistDetail>
               {playlist.link ? 
-                <PlaylistLink>{ellipsisInCenter(playlist.link, 12)}</PlaylistLink> :
+                <PlaylistLink href={playlist.link} target="_blank">{ellipsisInCenter(playlist.link.replace('https://', ''), 12)}</PlaylistLink> :
                 <PendingDetail>Pending</PendingDetail>}
               <ShareButton 
                 onClick={() => {
@@ -206,16 +206,26 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   padding: 0px 100px;
+
+  @media (max-width: ${breakpoints.medium}) {
+    padding: 0px 50px;
+  }
 `;
 
 const Header = styled.div`
   width: 100%;
+  max-width: 1500px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin: 25px 0px 75px;
+  margin: 25px auto 75px;
   padding: 50px 25px;
   border-bottom: 2px solid ${colors.white};
+
+  @media (max-width: ${breakpoints.large}) {
+    flex-direction: column;
+    text-align: center;
+  }
 `;
 
 const Heading = styled.p`
@@ -225,10 +235,20 @@ const Heading = styled.p`
   margin-right: 20px;
   overflow: hidden;
   text-overflow: ellipsis;
+
+  @media (max-width: ${breakpoints.large}) {
+    width: 100%;
+    margin: 0px auto 30px;
+  }
 `;
 
 const HeaderButtons = styled.div`
   display: flex;
+
+  @media (max-width: ${breakpoints.xsmall}) {
+    flex-direction: column;
+    align-items: center;
+  }
 `;
 
 const JoinPlaylistButton = styled(Button)`
@@ -241,6 +261,10 @@ const JoinPlaylistButton = styled(Button)`
     background: ${colors.purple};
     color: ${colors.white};
     border: 2px solid ${colors.purple};
+  }
+
+  @media (max-width: ${breakpoints.xsmall}) {
+    margin: 0px auto 20px;
   }
 `;
 
@@ -273,6 +297,17 @@ const PlaylistCard = styled.div`
   padding: 20px;
   border-radius: 10px;
   box-shadow: ${boxShadows.blue1};
+
+  @media (max-width: ${breakpoints.xlarge}) {
+    width: 45%;
+    margin: 0px 2.5% 50px;
+  }
+
+  @media (max-width: ${breakpoints.medium}) {
+    width: 100%;
+    max-width: 350px;
+    margin: 0px auto 50px;
+  }
 `;
 
 const PlaylistTitle = styled.p`
