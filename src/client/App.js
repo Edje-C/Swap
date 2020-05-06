@@ -2,8 +2,6 @@ import React, { Component } from 'react';
 import { Route, Switch } from 'react-router-dom'
 import styled from 'styled-components';
 
-import { saveApiToken, getUser } from './api';
-import { generateApiToken } from './functions';
 import { colors } from './globalStyles';
 
 import Landing from './pages/landing';
@@ -18,36 +16,18 @@ import How from './pages/how';
 class App extends Component {
   constructor(props) {
     super(props);
-
-    this.state = {
-      apiToken: ''
-    };
-  }
-
-  componentDidMount = async () => {
-    try {
-      const apiToken = generateApiToken();
-      await saveApiToken(apiToken);
-      this.setState({
-        apiToken
-      })
-    }
-    catch(err) {
-      console.log(err)
-    }
   }
 
   renderHomePage = () => {
     return (
-      this.state.apiToken && 
+      this.props.apiToken && 
       this.props.userId && 
-      this.props.spotifyId && 
-      this.props.displayName ?
+      this.props.spotifyId ?
         <Playlist 
-          apiToken={this.state.apiToken}
+          apiToken={this.props.apiToken}
           userId={this.props.userId}
           spotifyId={this.props.spotifyId}
-          displayName={this.props.displayName}
+          displayName={this.props.displayName || ''}
         /> :
         <Landing /> 
       )

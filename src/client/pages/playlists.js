@@ -26,11 +26,12 @@ class Playlist extends Component {
 
   componentDidMount = async () => {
     try {
-      const playlists = await getPlaylists(this.props.apiToken, this.props.userId);
+      const playlists = await getPlaylists(this.props.apiToken);
 
-      this.setState({
-        playlists
-      })
+      playlists &&
+        this.setState({
+          playlists
+        })
     }
     catch(err) {
       console.log(err)
@@ -170,7 +171,7 @@ class Playlist extends Component {
         {this.state.renderNewPlaylistModal && this.renderNewPlaylistModal()}
         {this.state.renderJoinPlaylistModal && this.renderJoinPlaylistModal()}
         <Header>
-          <Heading>{this.props.displayName}</Heading>
+          <Heading>{this.props.displayName || this.props.userId}</Heading>
           <HeaderButtons>
             <JoinPlaylistButton
               onClick={() => {

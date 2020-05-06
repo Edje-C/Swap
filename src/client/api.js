@@ -1,58 +1,11 @@
 import axios from 'axios';
 import { generatePassword } from './functions';
 
-export const saveApiToken = async (apiToken) => {
-  await axios({
-    method: 'post',
-    url: '/api',
-    data: {
-      apiToken
-    }
-  })
-}
-
-export const getUser = async (apiToken) => {
-  try {    
-    const user =  await axios({
-      method: 'get',
-      url: '/api/users/',
-      headers: {
-        'Authorization': `Bearer ${apiToken}`
-      },
-    })
-
-    return user.data
-  }
-  catch(err) {
-    throw err
-  }
-}
-
-export const getPlaylists = async (apiToken, userId) => {
+export const getPlaylists = async (apiToken) => {
   try {    
     const playlists =  await axios({
       method: 'get',
       url: '/api/playlists',
-      headers: {
-        'Authorization': `Bearer ${apiToken}`
-      },
-      params: {
-        userId
-      }
-    })
-
-    return playlists.data
-  }
-  catch(err) {
-    throw err
-  }
-}
-
-export const getPlaylist = async (apiToken, id) => {
-  try {    
-    const playlists =  await axios({
-      method: 'get',
-      url: `/api/playlists/${id}`,
       headers: {
         'Authorization': `Bearer ${apiToken}`
       }

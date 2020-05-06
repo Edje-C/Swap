@@ -11,6 +11,10 @@ const createHash = (password) => {
 }
 
 const loginRequired = (req, res, next) => {
+  if(req.headers['sec-fetch-site'] === 'none') {
+    next('route');
+  }
+
   if(!req.user) {
     res.status(401).json(`Error: No user found.`);
   }
@@ -26,8 +30,12 @@ const loginRequired = (req, res, next) => {
 }
 
 const tokenRequired = async (req, res, next) => {
+  if(req.headers['sec-fetch-site'] === 'none') {
+    next('route');
+  }
+
   if(!req.user) {
-    return next('route');
+    res.status(401).json(`Error: No user found.`);
   }
 
   const { apiToken } = req.user;
@@ -39,7 +47,7 @@ const tokenRequired = async (req, res, next) => {
     next();
   }
   else {
-    next('route')
+    res.status(401).json(`Error: Request missing API token.`);
   }
 }
 

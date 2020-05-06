@@ -1,7 +1,7 @@
 const express = require('express');
 const _ = require('lodash');
 const router = express.Router();
-const { tokenRequired, loginRequired } = require('../lib/helpers');
+const { loginRequired, tokenRequired } = require('../lib/helpers');
 const {
   getPlaylistByPlaylistId,
   getFullPlaylistByUserId,
@@ -19,11 +19,11 @@ const {
   addSongsToPlaylist
 } = require('../lib/spotify');
 
-router.get('/', tokenRequired, loginRequired, async (req, res) => {
-  const { userId } = req.query;
+router.get('/', loginRequired, tokenRequired, async (req, res) => {
+  const { userId } = req.user;
 
   if(!userId) {
-    res.status(422).json(`Error: Request should include user id.`)
+    res.status(500).json(`Error: Request should include user id.`)
   }
 
   try {
@@ -36,19 +36,7 @@ router.get('/', tokenRequired, loginRequired, async (req, res) => {
   }
 });
 
-router.get('/:id', tokenRequired, loginRequired, async (req, res) => {
-  try {
-    const playlist = await getFullPlaylistByPlaylistId(req.params.id);
-
-    res.json(playlist);
-  }
-  catch(err) {
-    console.log(err)
-    res.status(500).json(err);
-  }
-});
-
-router.post('/update-password', tokenRequired, loginRequired, async (req, res) => {
+router.post('/update-password', loginRequired, tokenRequired, async (req, res) => {
   const {playlistId, password} = req.body;
 
   if(!(playlistId && password)) {
@@ -66,7 +54,7 @@ router.post('/update-password', tokenRequired, loginRequired, async (req, res) =
   }
 })
 
-router.post('/', tokenRequired, loginRequired, async (req, res) => {
+router.post('/', loginRequired, tokenRequired, async (req, res) => {
   const {userId, title, songCount, password} = req.body;
 
   if(!(userId && title && songCount && password)) {
@@ -86,7 +74,7 @@ router.post('/', tokenRequired, loginRequired, async (req, res) => {
   }
 });
 
-router.post('/save', tokenRequired, loginRequired, async (req, res) => {
+router.post('/save', loginRequired, tokenRequired, async (req, res) => {
   const {spotifyId, playlistId} = req.body;
 
   if(!(spotifyId && playlistId)) {

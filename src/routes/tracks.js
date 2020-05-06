@@ -3,9 +3,9 @@ const router = express.Router();
 const { saveTracks } = require('../functions/tracks');
 const { getPlaylistByPlaylistId, getFullPlaylistByPlaylistId, verifyPlaylistPassword } = require('../functions/playlists');
 const { getAccessToken, getPlaylistTracks } = require('../lib/spotify');
-const { tokenRequired, loginRequired, getPlaylistIdAndPassword } = require('../lib/helpers');
+const { loginRequired, tokenRequired, getPlaylistIdAndPassword } = require('../lib/helpers');
 
-router.post('/', tokenRequired, loginRequired, async (req, res) => {
+router.post('/', loginRequired, tokenRequired, async (req, res) => {
   const {key, userId} = req.body;
 
   if(!(key && userId)) {
