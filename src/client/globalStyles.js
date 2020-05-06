@@ -43,7 +43,7 @@ export const boxShadows = {
 }
 
 export const images = {
-  logo: require('./static/logo.png')
+  logo: '/static/logo.png'
 }
 
 export const breakpoints = {

@@ -12,6 +12,7 @@ const createHash = (password) => {
 
 const loginRequired = (req, res, next) => {
   if(req.headers['sec-fetch-site'] === 'none') {
+    console.log('route')
     next('route');
   }
 
@@ -31,6 +32,7 @@ const loginRequired = (req, res, next) => {
 
 const tokenRequired = async (req, res, next) => {
   if(req.headers['sec-fetch-site'] === 'none') {
+    console.log('route')
     next('route');
   }
 

@@ -58,10 +58,10 @@ class App extends Component {
           <Route exact path="/">
             {this.renderHomePage()}
           </Route>
-          <Route path="/how-it-works">
+          <Route exact path="/how-it-works">
             <How />
           </Route>
-          <Route path="/404">
+          <Route exact path="/404">
             <Error />
           </Route>
           <Route path="/*">
