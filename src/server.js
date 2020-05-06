@@ -14,6 +14,7 @@ import { ServerStyleSheet } from 'styled-components'
 
 require('dotenv').config();
 
+import userRouter from './routes/users';
 import playlistRouter from './routes/playlists';
 import trackRouter from './routes/tracks';
 import spotifyRouter from './routes/spotify';
@@ -38,9 +39,10 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use('/api/spotify', spotifyRouter);
+app.use('/api/users', userRouter);
 app.use('/api/playlists', playlistRouter);
 app.use('/api/tracks', trackRouter);
+app.use('/api/spotify', spotifyRouter);
 
 app.post('/api', (req, res) => {
   try {
@@ -65,19 +67,11 @@ app.get('/*', (req, res) => {
       </StaticRouter>
     ));
     const styleTags = sheet.getStyleTags();
-    const initialState = req.user ? {
-      userId: req.user.userId,
-      spotifyId: req.user.spotifyId,
-      displayName: req.user.displayName,
-      apiToken: req.user.apiToken
-    } : {}
-
     sheet.seal();
 
     res.send(html(
       appMarkup,
-      styleTags,
-      initialState
+      styleTags
     ))
   }
   catch(err) {

@@ -1,6 +1,23 @@
 import axios from 'axios';
 import { generatePassword } from './functions';
 
+export const getUser = async (apiToken) => {
+  try {    
+    const user =  await axios({
+      method: 'get',
+      url: '/api/users',
+      headers: {
+        'Authorization': `Bearer ${apiToken}`
+      }
+    })
+
+    return user.data
+  }
+  catch(err) {
+    throw err
+  }
+}
+
 export const getPlaylists = async (apiToken) => {
   try {    
     const playlists =  await axios({

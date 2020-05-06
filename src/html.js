@@ -1,8 +1,7 @@
-export default (body, styles, initialState) => (`
+export default (body, styles) => (`
   <!DOCTYPE html>
   <html>
     <head>
-      <script>window.__APP_INITIAL_STATE__ = ${JSON.stringify(initialState)}</script>
       <title>Swap</title>
       <meta charSet="UTF-8" />
       <meta name="viewport" content="width=device-width, initial-scale=1"/>
