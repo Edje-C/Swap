@@ -3,7 +3,7 @@ import express from 'express';
 import path from 'path';
 import compression from "compression";
 import logger from 'morgan';
-import session from 'express-session';
+import session from 'cookie-session';
 import cors from 'cors';
 import mongoose from 'mongoose';
 import passport from 'passport';
@@ -97,8 +97,7 @@ const connectWithRetry = () => {
     useUnifiedTopology: true
   })
   .then(() => {
-    const port = process.env.PORT || 3000;
-    app.listen(port, () => console.log(`Listening on port: ${port}`));
+    console.log('MongoDB connection success.')
   })
   .catch(() => {
     console.log('MongoDB connection failed. Retrying.')
@@ -107,5 +106,8 @@ const connectWithRetry = () => {
 };
 
 connectWithRetry();
+
+const port = process.env.PORT || 3000;
+app.listen(port, () => console.log(`Listening on port: ${port}`));
 
 export default app;
