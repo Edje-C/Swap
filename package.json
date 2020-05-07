@@ -3,8 +3,10 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "npm run clear && webpack && node ./build/server.js",
-    "dev": "npm run clear && npm-run-all --parallel watch-build watch-sever",
+    "start": "npm run clear && webpack",
+    "heroku-postbuild": "node ./build/server.js",
+    "dev": "npm run clear && webpack && node ./build/server.js",
+    "dev-watch": "npm run clear && npm-run-all --parallel watch-build watch-sever",
     "watch-sever": "nodemon ./build/server.js",
     "watch-build": "webpack --watch",
     "clear": "rimraf ./build"
