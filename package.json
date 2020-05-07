@@ -4,12 +4,12 @@
   "private": true,
   "scripts": {
     "start": "npm run clear && webpack",
-    "heroku-postbuild": "node ./build/server.js",
-    "dev": "npm run clear && webpack && node ./build/server.js",
+    "heroku-postbuild": "node build/server.js",
+    "dev": "npm run clear && webpack && node build/server.js",
     "dev-watch": "npm run clear && npm-run-all --parallel watch-build watch-sever",
-    "watch-sever": "nodemon ./build/server.js",
+    "watch-sever": "nodemon build/server.js",
     "watch-build": "webpack --watch",
-    "clear": "rimraf ./build"
+    "clear": "rimraf build"
   },
   "dependencies": {
     "@babel/polyfill": "^7.8.7",
