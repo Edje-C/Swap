@@ -53,6 +53,9 @@
     "webpack-cli": "^3.3.11",
     "webpack-node-externals": "^1.7.2"
   },
+  "engines": {
+    "node": "10.x"
+  },
   "main": "build/server.js",
   "author": "",
   "license": "ISC",
