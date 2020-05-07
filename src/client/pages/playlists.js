@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import styled from 'styled-components';
 import moment from "moment";
 import { colors, fontSizes, fontWeights, boxShadows, breakpoints } from "../globalStyles";
-import { getPlaylists } from "../api";
+import { logout, getPlaylists } from "../api";
 import { ellipsisInCenter } from "../functions";
 import Modal from "../components/modal";
 import NewPlaylist from "../components/newPlaylist";
@@ -32,6 +32,16 @@ class Playlist extends Component {
         this.setState({
           playlists
         })
+    }
+    catch(err) {
+      console.log(err)
+    }
+  }
+
+  logout = async () => {
+    try {
+      await logout();
+      window.location.reload(true);
     }
     catch(err) {
       console.log(err)
@@ -197,6 +207,7 @@ class Playlist extends Component {
           this.state.playlists.length ? 
           this.renderPlaylists() :
           <BlankStateMessage>Get started by joining or creating a Swap.</BlankStateMessage>}
+        <LogoutButton onClick={this.logout}>logout</LogoutButton>
       </Container>
     )
   }
@@ -374,6 +385,29 @@ const ShareButton = styled(Button)`
 const BlankStateMessage = styled.p`
   color: ${colors.opaqueWhite3};
   font-size: ${fontSizes.large};
+`;
+
+const LogoutButton = styled.button`
+  width: fit-content;
+  background: none;
+  color: ${colors.opaqueWhite1};
+  font-size: ${fontSizes.small};
+  margin: 0px 0px 50px auto;
+
+  &::after {
+    width: 100%;
+    height: 2px;
+    background: none;
+    display: block;
+    margin-top: 2px;
+    content: ''
+  }
+
+  &:hover {
+    &::after {
+      background: ${colors.opaqueWhite1};
+    }
+  } 
 `;
 
 export default Playlist;

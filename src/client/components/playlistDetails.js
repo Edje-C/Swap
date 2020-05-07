@@ -116,7 +116,8 @@ class PlaylistDetails extends Component {
               <PasswordButton
                 onClick={this.onPasswordButtonClick}
               >
-                {this.state.passwordText ? ellipsisInCenter(this.state.passwordText, 12) : 'generate new password'}
+                <ClickIcon className="material-icons">touch_app</ClickIcon>
+                {this.state.passwordText ? ellipsisInCenter(this.state.passwordText, 10) : 'generate new password'}
               </PasswordButton>
             </TextGroup> : null}
           <TextGroup>
@@ -171,13 +172,11 @@ const DetailSpan = styled.span`
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  flex: 1;
   text-align: left;
 `;
 
 const DetailLink = styled.a`
   color: ${colors.opaqueBlue};
-  flex: 1;
   text-align: left;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -192,12 +191,17 @@ const PasswordButton = styled.button`
   background: none;
   color: ${colors.gray};
   font-size: ${fontSizes.xsmall};
-  flex: 1;
+  display: flex;
   text-align: left;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+`;
+
+const ClickIcon = styled.span`
+  font-size: ${fontSizes.small};
+  margin-right: 5px;
 `;
 
 const CollaboratorsContainer = styled.div`

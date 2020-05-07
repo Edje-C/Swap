@@ -120,6 +120,10 @@ class NewPlaylist extends Component {
         <ExpireMessage>It will expire in 24 hours!</ExpireMessage>
         <PasswordButton
           onClick={() => {
+            if(keyText === 'copied!') {
+              return
+            }
+            
             const password = this.state.keyText;
 
             copyToClipboard(password);
@@ -136,7 +140,8 @@ class NewPlaylist extends Component {
             );
           }}
         >
-          {ellipsisInCenter(this.state.keyText, 15)}
+          <ClickIcon className="material-icons">touch_app</ClickIcon>
+          {ellipsisInCenter(this.state.keyText, 12)}
         </PasswordButton>
       </>
     )
@@ -256,6 +261,11 @@ const PasswordButton = styled.button`
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+`;
+
+const ClickIcon = styled.span`
+  font-size: ${fontSizes.small};
+  margin-right: 5px;
 `;
 
 export default NewPlaylist;

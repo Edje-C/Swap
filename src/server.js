@@ -24,7 +24,6 @@ import App from './client/App'
 
 const app = express();
 const uri = process.env.ATLAS_URI;
-const connection = mongoose.connection;
 
 app.use(compression());
 app.use(logger('dev'));
@@ -33,8 +32,7 @@ app.use(cors());
 app.use(express.urlencoded({ extended: false }));
 app.use(session({
   secret: "\x02\xf3\xf7r\t\x9f\xee\xbbu\xb1\xe1\x90\xfe'\xab\xa6L6\xdd\x8d[\xccO\xfe",
-  resave: false,
-  saveUninitialized: true
+  maxAge: 3600 * 60
 }));
 app.use(passport.initialize());
 app.use(passport.session());
@@ -44,17 +42,9 @@ app.use('/api/playlists', playlistRouter);
 app.use('/api/tracks', trackRouter);
 app.use('/api/spotify', spotifyRouter);
 
-app.post('/api', (req, res) => {
-  try {
-    const { apiToken } = req.body;
-    req.user['apiToken'] = apiToken;
-  
-    res.status(200).json('success');
-  }
-  catch(err) {
-    console.log(err)
-    res.status(500).json(err);
-  }
+app.post('/api/logout', (req, res) => {
+  req.session = null;
+  res.status(200).json('success');
 });
 
 app.use('/', express.static(path.join(__dirname)));
@@ -94,7 +84,8 @@ const connectWithRetry = () => {
   mongoose.connect(uri, {
     useNewUrlParser: true,
     useCreateIndex: true,
-    useUnifiedTopology: true
+    useUnifiedTopology: true,
+    serverSelectionTimeoutMS: 5000
   })
   .then(() => {
     console.log('MongoDB connection success.')

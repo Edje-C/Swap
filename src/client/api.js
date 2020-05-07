@@ -1,6 +1,18 @@
 import axios from 'axios';
 import { generatePassword } from './functions';
 
+export const logout = async () => {
+  try {    
+    await axios({
+      method: 'post',
+      url: '/api/logout'
+    });
+  }
+  catch(err) {
+    throw err
+  }
+}
+
 export const getUser = async (apiToken) => {
   try {    
     const user =  await axios({
