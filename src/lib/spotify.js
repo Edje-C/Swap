@@ -51,7 +51,7 @@ const createPlaylistForUser = async (spotifyId, title, accessToken) => {
       },
       data: {
         name: title,
-        public: false,
+        public: true,
         description: 'A Playlist Created With Swap'
       }
     });

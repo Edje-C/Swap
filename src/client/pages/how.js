@@ -7,7 +7,7 @@ function How() {
     <Container>
       <Heading>How Does It Work?</Heading>
       <Section>
-        <Message>Swap pulls music from your spotify account to create a playlist.</Message>
+        <Message>Swap pulls music from your Spotify account to create a playlist.</Message>
       </Section>
       <Section>
         <Message>When you create a Swap, you assign a title and a <OpaqueItalic>songCount</OpaqueItalic>. The <OpaqueItalic>songCount</OpaqueItalic> will let Swap know how many songs to pull from each collaborator for the playlist.</Message>

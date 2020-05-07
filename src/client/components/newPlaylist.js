@@ -92,7 +92,7 @@ class NewPlaylist extends Component {
           />
         </TextGroup>
         <TextGroup>
-          <Label>Songs Per Collaborator :</Label>
+          <Label>Songs Count :</Label>
           <Input 
             onChange={this.songCountOnChange}
             onKeyDown={(event) => {
