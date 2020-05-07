@@ -3,8 +3,9 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "npm run clear && webpack",
-    "heroku-postbuild": "node build/server.js",
+    "heroku-postinstall": "npm run clear && webpack",
+    "start": "node build/server.js",
+    "build": "npm run clear && webpack",
     "dev": "npm run clear && webpack && node build/server.js",
     "dev-watch": "npm run clear && npm-run-all --parallel watch-build watch-sever",
     "watch-sever": "nodemon build/server.js",
