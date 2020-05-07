@@ -392,7 +392,7 @@ const LogoutButton = styled.button`
   background: none;
   color: ${colors.opaqueWhite1};
   font-size: ${fontSizes.small};
-  margin: 0px 0px 50px auto;
+  margin: auto 0px 50px auto;
 
   &::after {
     width: 100%;
