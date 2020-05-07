@@ -49,7 +49,7 @@ router.post('/', loginRequired, tokenRequired, async (req, res) => {
       res.json(updatedPlaylist);
     }
     else {
-      throw `Error: Couldn't collect tracks.`;
+      throw `Error: Unable retrieve tracks.`;
     }
   }
   catch(err) {

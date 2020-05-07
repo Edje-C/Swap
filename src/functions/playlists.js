@@ -166,6 +166,10 @@ const createPlaylist = async (creatorId, title, songCount, password, accessToken
 
   try {
     uris = await getPlaylistTracks(undefined, songCount, accessToken);
+
+    if(!(uris && uris.length)) {
+      throw `Error: Unable to retrieve tracks`;
+    }
   }
   catch(err) {
     throw err
