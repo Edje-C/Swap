@@ -90,18 +90,22 @@ app.use((err, req, res) => {
   res.send(err);
 });
 
-mongoose.connect(uri, {
-  useNewUrlParser: true,
-  useCreateIndex: true,
-  useUnifiedTopology: true,
-  serverSelectionTimeoutMS: 5000
-});
-connection.on('error', console.error.bind(console, 'connection error:'));
-connection.once('open', () => {
-  console.log('MongoDB connection success');
-})
+const connectWithRetry = () => {
+  mongoose.connect(uri, {
+    useNewUrlParser: true,
+    useCreateIndex: true,
+    useUnifiedTopology: true
+  })
+  .then(() => {
+    const port = process.env.PORT || 3000;
+    app.listen(port, () => console.log(`Listening on port: ${port}`));
+  })
+  .catch(() => {
+    console.log('MongoDB connection failed. Retrying.')
+    setTimeout(connectWithRetry, 5000)
+  });
+};
 
-const port = process.env.PORT || 3000;
-app.listen(port, () => console.log(`Listening on port: ${port}`));
+connectWithRetry();
 
 export default app;

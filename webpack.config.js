@@ -16,26 +16,18 @@ const common = {
             '@babel/preset-react',
           ],
         },
-      },
-      {
-        test: /\.(jpe?g|png|gif|svg)$/i,
-        use: [{
-          loader: 'file-loader',
-          options: {
-            name: '[name].[ext]',
-            outputPath: 'static/',
-            esModule: false
-          }
-        }]
       }
     ]
-  }
+  },
+  plugins: [
+    new CopyPlugin([
+      { from: path.resolve(__dirname, 'src/client/static'), to: 'static/' },
+    ]),
+  ]
 };
 
 const clientConfig = {
   ...common,
-
-  mode: 'development',
 
   name: 'client',
   target: 'web',
@@ -75,8 +67,6 @@ const clientConfig = {
 
 const serverConfig = {
   ...common,
-
-  mode: 'development',
 
   name: 'server',
   target: 'node',
