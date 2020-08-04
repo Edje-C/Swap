@@ -120,7 +120,7 @@ class NewPlaylist extends Component {
         <ExpireMessage>It will expire in 24 hours!</ExpireMessage>
         <PasswordButton
           onClick={() => {
-            if(keyText === 'copied!') {
+            if(this.state.keyText === 'copied!') {
               return
             }
             

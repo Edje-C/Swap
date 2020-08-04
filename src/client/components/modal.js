@@ -85,6 +85,7 @@ const CloseButton = styled.button`
 
   @media (max-width: ${breakpoints.small}) {
     display: flex;
+    align-items: center;
   }
 `;
 
